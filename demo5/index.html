@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026年专升本报考录取预测系统</title>
+<style>
+:root {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --danger: #ef4444;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --warn: #f59e0b;
+  --warn-bg: #fffbeb;
+  --warn-border: #fde68a;
+  --pass: #10b981;
+  --pass-bg: #ecfdf5;
+  --pass-border: #a7f3d0;
+  --safe: #3b82f6;
+  --safe-bg: #eff6ff;
+  --safe-border: #bfdbfe;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+.header {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+.header p { opacity: 0.85; font-size: 0.95rem; }
+.container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.card-title .icon { font-size: 1.2rem; }
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.form-group {
+  flex: 1;
+  min-width: 200px;
+}
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+.form-group select { cursor: pointer; background: white; }
+.score-breakdown {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.score-breakdown .total-highlight {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: calc(100% - 2rem);
+  margin-top: 2px;
+}
+.suggestions div {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.suggestions div:hover { background: #f1f5f9; }
+.suggestions div .major-name { font-weight: 500; }
+.suggestions div .major-school { color: var(--text-secondary); font-size: 0.8rem; }
+.btn {
+  padding: 0.7rem 2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  margin-top: 1.6rem;
+}
+.btn:hover { background: #4338ca; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.result-section { display: none; }
+.result-section.show { display: block; }
+.match-summary {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f1f5f9;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+.match-summary strong { color: var(--primary); }
+.level-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin: 0.2rem 0.3rem;
+}
+.level-stat-safe { background: #dbeafe; color: #1e3a8a; }
+.level-stat-pass { background: #d1fae5; color: #065f46; }
+.level-stat-close { background: #fef3c7; color: #92400e; }
+.level-stat-danger { background: #fee2e2; color: #991b1b; }
+.level-stat-unknown { background: #f1f5f9; color: #64748b; }
+.result-card {
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  transition: all 0.25s;
+  position: relative;
+}
+.result-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.1); transform: translateY(-1px); }
+.result-card.level-card-danger { border-left-color: var(--danger); background: linear-gradient(135deg, #fef2f2 0%, #ffffff 30%); }
+.result-card.level-card-close { border-left-color: var(--warn); background: linear-gradient(135deg, #fffbeb 0%, #ffffff 30%); }
+.result-card.level-card-pass { border-left-color: var(--pass); background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 30%); }
+.result-card.level-card-safe { border-left-color: var(--safe); background: linear-gradient(135deg, #eff6ff 0%, #ffffff 30%); }
+.result-card.level-card-unknown { border-left-color: #94a3b8; }
+
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 10px 10px 0 0;
+  background: var(--border);
+}
+.result-card.level-card-danger::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+.result-card.level-card-close::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.result-card.level-card-pass::before { background: linear-gradient(90deg, #10b981, #34d399); }
+.result-card.level-card-safe::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.result-card .school-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.result-card .major-name-tag {
+  display: inline-block;
+  background: #f1f5f9;
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+}
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.level-badge .level-emoji { font-size: 1.1rem; }
+.level-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); color: #991b1b; border: 2px solid #f87171; text-shadow: 0 1px 0 rgba(255,255,255,0.3); }
+.level-close { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 2px solid #fbbf24; text-shadow: 0 1px 0 rgba(255,255,255,0.3); }
+.level-pass { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; border: 2px solid #34d399; text-shadow: 0 1px 0 rgba(255,255,255,0.3); }
+.level-safe { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1e3a8a; border: 2px solid #60a5fa; text-shadow: 0 1px 0 rgba(255,255,255,0.3); }
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+}
+.data-table th {
+  background: #f8fafc;
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+.data-table td {
+  padding: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+.data-table .highlight { font-weight: 600; color: var(--primary); }
+.data-table .score-up { color: var(--danger); }
+.data-table .score-down { color: var(--pass); }
+.prediction-box {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+.prediction-box .pred-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+}
+.prediction-box .pred-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.prediction-box .pred-detail {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.3rem;
+  line-height: 1.8;
+}
+.score-diff {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin: 0.8rem 0 0.3rem 0;
+  font-weight: 700;
+}
+.score-diff-positive { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.score-diff-negative { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.score-diff .diff-value { font-size: 1.5rem; }
+.score-diff .diff-label { font-size: 0.8rem; opacity: 0.8; }
+.pred-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.pred-item {
+  flex: 1;
+  min-width: 120px;
+}
+.logic-section {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-top: 1rem;
+}
+.logic-section h3 {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  color: #92400e;
+}
+.logic-section p {
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: #78350f;
+}
+.logic-section .formula {
+  background: white;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  border-left: 3px solid var(--primary);
+}
+.logic-section .level-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+}
+.logic-section .level-heading-danger { background: #fee2e2; color: #991b1b; }
+.logic-section .level-heading-close { background: #fef3c7; color: #92400e; }
+.logic-section .level-heading-pass { background: #d1fae5; color: #065f46; }
+.logic-section .level-heading-safe { background: #dbeafe; color: #1e3a8a; }
+.model-explain {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-top: 0.5rem;
+}
+.model-explain summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.sort-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.sort-btn {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+.sort-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+.filter-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 0.35rem 0.85rem;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.filter-chip.active { background: var(--primary-light); color: white; border-color: var(--primary-light); }
+.filter-chip[data-level="danger"] { border-color: #fca5a5; color: #dc2626; }
+.filter-chip[data-level="danger"].active { background: #ef4444; color: white; border-color: #ef4444; }
+.filter-chip[data-level="close"] { border-color: #fcd34d; color: #d97706; }
+.filter-chip[data-level="close"].active { background: #f59e0b; color: white; border-color: #f59e0b; }
+.filter-chip[data-level="pass"] { border-color: #6ee7b7; color: #059669; }
+.filter-chip[data-level="pass"].active { background: #10b981; color: white; border-color: #10b981; }
+.filter-chip[data-level="safe"] { border-color: #93c5fd; color: #2563eb; }
+.filter-chip[data-level="safe"].active { background: #3b82f6; color: white; border-color: #3b82f6; }
+.comparison-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: #e2e8f0;
+  position: relative;
+  margin: 0.8rem 0 0.3rem 0;
+  overflow: visible;
+}
+.comparison-bar .fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+.comparison-bar .marker {
+  position: absolute;
+  top: -6px;
+  width: 3px;
+  height: 24px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.comparison-bar .marker::after {
+  content: '预测线';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.legend-item { display: flex; align-items: center; gap: 0.3rem; }
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.difficulty-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+.difficulty-easy { background: #d1fae5; color: #065f46; }
+.difficulty-medium { background: #fef3c7; color: #92400e; }
+.difficulty-hard { background: #fee2e2; color: #991b1b; }
+.subject-info-box {
+  background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+.subject-info-box h4 { color: #1e3a8a; margin-bottom: 0.5rem; font-size: 0.95rem; }
+.subject-info-box .diff-item { display: flex; align-items: center; gap: 0.5rem; margin: 0.3rem 0; }
+.subject-info-box .diff-item .subject-name { min-width: 80px; font-weight: 500; }
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.3rem; }
+  .form-row { flex-direction: column; }
+  .form-group { min-width: 100%; }
+  .btn { width: 100%; }
+  .pred-row { flex-direction: column; }
+  .score-breakdown { flex-direction: column; gap: 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 2026年专升本报考录取预测系统</h1>
+  <p>基于历年招生计划、报录比、录取分数及2026真题难度的多因子数理预测模型</p>
+</div>
+
+<div class="container">
+  <!-- 真题难度说明 -->
+  <div class="subject-info-box" id="difficultyInfoBox">
+    <h4>📝 2026年公共课真题难度分析</h4>
+    <div id="difficultyContent">
+      <p style="color:#64748b;">请先输入专业名称，系统将根据专业科类自动展示对应的真题难度分析</p>
+    </div>
+    <p style="margin-top:0.5rem;color:#475569;font-size:0.82rem;">💡 专升本总分600分 = 公共课300分（文科：语文150+英语150；理科：高数150+英语150）+ 专业课300分</p>
+  </div>
+
+  <!-- 输入区域 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🔍</span> 查询条件</div>
+    <div class="form-row" style="position:relative;">
+      <div class="form-group" style="position:relative;">
+        <label>专业名称（支持模糊查询）</label>
+        <input type="text" id="majorInput" placeholder="输入专业名称，如：计算机、会计、学前教育..." autocomplete="off">
+        <div class="suggestions" id="suggestions" style="display:none;"></div>
+      </div>
+      <div class="form-group">
+        <label>科类 <span id="categoryHint" style="color:#4f46e5;font-weight:400;font-size:0.8rem;"></span></label>
+        <select id="categorySelect" onchange="onCategoryChange()">
+          <option value="arts">文科（语文+英语）</option>
+          <option value="science">理科（高数+英语）</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:0.8rem;">
+      <div class="form-group">
+        <label>公共课预估总分 <span style="color:#94a3b8;font-weight:400;">（满分300分）</span></label>
+        <input type="number" id="publicScoreInput" placeholder="输入公共课预估总分" min="0" max="300" step="0.5">
+      </div>
+      <div class="form-group">
+        <label>专业课预估总分 <span style="color:#94a3b8;font-weight:400;">（满分300分）</span></label>
+        <input type="number" id="majorScoreInput" placeholder="输入专业课预估总分" min="0" max="300" step="0.5">
+      </div>
+      <button class="btn" onclick="predict()">开始预测</button>
+    </div>
+    <div class="score-breakdown" id="scoreBreakdown">
+      <span>预估总分：<span class="total-highlight" id="totalDisplay">-</span> / 600</span>
+      <span>公共课：<span id="publicDisplay">-</span> / 300</span>
+      <span>专业课：<span id="majorDisplay">-</span> / 300</span>
+      <span>真题难度修正：<span id="difficultyDisplay" style="color:#4f46e5;">待计算</span></span>
+    </div>
+    <details class="model-explain" style="margin-top:1rem;">
+      <summary>📖 查看预测模型说明</summary>
+      <p><strong>一、考试结构</strong></p>
+      <p>专升本总分600分 = 公共课300分 + 专业课300分</p>
+      <p>• 文科公共课：大学语文150分 + 英语150分</p>
+      <p>• 理科公共课：高等数学150分 + 英语150分</p>
+      <p>• 专业课：两门专业课各150分，合计300分</p>
+      <p><strong>二、预测公式</strong></p>
+      <p>2026预测分数线 = 2025录取分 + 报录比变化调整 + 趋势修正 + 招生计划调整 + 极端值修正 + 真题难度修正</p>
+      <p><strong>三、真题难度修正机制</strong></p>
+      <p>基于2026年公共课真题难度评估，对预测分数线进行方向性修正：</p>
+      <p>• 语文（中等偏易）：公共课均分预计上升，录取线 +3~8分</p>
+      <p>• 英语（中等）：公共课均分预计持平微升，录取线 +0~3分</p>
+      <p>• 高数（中等偏难）：公共课均分预计下降，录取线 -3~8分</p>
+      <p>修正逻辑：公共课偏易→考生均分上升→竞争推高总分线→预测线上调；反之亦然</p>
+      <p><strong>四、等级判定</strong></p>
+      <p>• 🔴 危险：用户分数 < 预测线 × 95%</p>
+      <p>• 🟡 接近：预测线 × 95% ≤ 用户分数 < 预测线</p>
+      <p>• 🟢 达标：预测线 ≤ 用户分数 < 预测线 × 105%</p>
+      <p>• 🔵 超稳定：用户分数 ≥ 预测线 × 105%</p>
+    </details>
+  </div>
+
+  <!-- 结果区域 -->
+  <div class="result-section" id="resultSection">
+    <div class="card">
+      <div class="match-summary" id="matchSummary"></div>
+      <div class="filter-row" id="filterRow"></div>
+      <div class="sort-controls">
+        <span style="font-size:0.85rem;color:var(--text-secondary);line-height:2;">排序：</span>
+        <button class="sort-btn active" onclick="sortResults('level',this)">按等级</button>
+        <button class="sort-btn" onclick="sortResults('predScore',this)">按预测线</button>
+        <button class="sort-btn" onclick="sortResults('school',this)">按院校</button>
+        <button class="sort-btn" onclick="sortResults('ratio2026',this)">按2026报录比</button>
+      </div>
+      <div id="resultCards"></div>
+    </div>
+
+    <!-- 逻辑表述 -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🧠</span> 预测逻辑分析</div>
+      <div id="logicAnalysis"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 全局数据
+let allData = [];
+let currentResults = [];
+let currentLevelFilter = 'all';
+
+// 加载数据
+fetch('data.json')
+  .then(r => r.json())
+  .then(d => { allData = d; })
+  .catch(e => console.error('数据加载失败:', e));
+
+// ==================== 专业科类映射 ====================
+// arts=仅文科, science=仅理科, both=文理兼收
+const MajorCategoryMap = {
+  // ===== 仅文科 =====
+  '汉语言文学': 'arts', '汉语言文学师范': 'arts', '学前教育': 'arts', '小学教育': 'arts',
+  '特殊教育': 'arts', '历史学': 'arts', '法学': 'arts', '社会工作': 'arts',
+  '知识产权': 'arts', '思想政治教育': 'arts', '体育教育': 'arts',
+  '英语': 'both', '英语 师范': 'both', '商务英语': 'both', '俄语': 'arts', '日语': 'arts', '朝鲜语': 'arts',
+  '新闻学': 'arts', '广告学': 'arts', '网络与新媒体': 'arts',
+  '音乐学': 'arts', '音乐表演': 'arts', '舞蹈表演': 'arts', '表演': 'arts',
+  '动画': 'arts', '绘画': 'arts', '视觉传达设计': 'arts', '视觉传达艺术': 'arts',
+  '环境设计': 'arts', '服装与服饰设计': 'arts', '播音与主持艺术': 'arts', '数字媒体艺术': 'arts',
+  '护理学': 'both', '中药学': 'both', '药学': 'both', '药物制剂': 'both',
+  '针灸推拿学': 'both', '预防医学': 'both', '医学检验技术': 'both', '医学影像技术': 'both',
+  '康复治疗学': 'both',
+  // ===== 仅理科 =====
+  '计算机科学与技术': 'science', '软件工程': 'science', '网络工程': 'science', '网络工程技术': 'science',
+  '物联网工程': 'science', '数据科学与大数据技术': 'science', '人工智能': 'science', '智能科学与技术': 'science',
+  '机械工程': 'science', '机械设计制造及其自动化': 'science', '机械设计制造及自动化': 'science',
+  '机械电子工程': 'science', '机械电子工程技术': 'science', '智能制造工程': 'science',
+  '电气工程及其自动化': 'science', '自动化': 'science', '自动化技术与应用': 'science',
+  '电子信息工程': 'science', '电子信息科学与技术': 'science', '通信工程': 'science',
+  '土木工程': 'science', '工程造价': 'science',
+  '给排水科学与工程': 'science', '水利水电工程': 'science', '测绘工程': 'science',
+  '化学工程与工艺': 'science', '应用化学': 'science', '新能源材料与器件': 'science',
+  '无机非金属材料工程': 'science', '材料成型及控制工程': 'science',
+  '食品科学与工程': 'science', '食品质量与安全': 'science',
+  '生物工程': 'science', '生物制药': 'science', '生物医学工程': 'science', '生物科学师范': 'science',
+  '环境工程': 'science', '环境科学与工程': 'science',
+  '数学与应用数学': 'science', '化学师范': 'science',
+  '农业水利工程': 'science', '动物科学': 'science', '园林': 'science', '园艺': 'science', '林学': 'science',
+  '新能源科学与工程': 'science', '能源与动力工程': 'science',
+  '新能源汽车工程': 'science', '新能源汽车工程技术': 'science',
+  '车辆工程': 'science', '汽车服务工程': 'science', '智能车辆工程': 'science',
+  '轨道交通信号与控制': 'science', '机器人工程': 'science',
+  '安全工程': 'science', '工业工程': 'science', '工业设计': 'science',
+  '智能建造工程': 'science', '智能建造工程技术': 'science',
+  '数字媒体技术': 'science', '酿酒工程': 'science',
+  '风景园林': 'science', '人文地理与城乡规划': 'science',
+  // ===== 文理兼收 =====
+  '会计学': 'both', '财务管理': 'both', '审计学': 'both', '资产评估': 'both',
+  '金融学': 'both', '金融工程': 'both', '经济学': 'both', '经济统计学': 'both', '经济与金融': 'both',
+  '国际经济与贸易': 'both', '数字经济': 'both', '互联网金融': 'both',
+  '工商管理': 'both', '市场营销': 'both', '人力资源管理': 'both', '公共事业管理': 'both',
+  '物流管理': 'both', '物流工程': 'both', '供应链管理': 'both',
+  '旅游管理': 'both', '酒店管理': 'both', '会展经济与管理': 'both',
+  '电子商务': 'both', '全媒体电商运营': 'both',
+  '信息管理与信息系统': 'both', '工程管理': 'both',
+  '文化产业管理': 'both', '健康服务与管理': 'both', '养老服务管理': 'both',
+  '运动康复': 'both',
+};
+
+// 获取专业的科类（支持模糊匹配）
+function getMajorCategory(majorName) {
+  // 精确匹配
+  if (MajorCategoryMap[majorName]) return MajorCategoryMap[majorName];
+  // 模糊匹配
+  for (const [key, val] of Object.entries(MajorCategoryMap)) {
+    if (majorName.includes(key) || key.includes(majorName)) return val;
+  }
+  // 根据关键词推断
+  const artsKeywords = ['教育', '文学', '语言', '历史', '法学', '社工', '艺术', '设计', '音乐', '舞蹈', '表演', '绘画', '动画', '播音', '新闻', '广告', '体育'];
+  const scienceKeywords = ['计算机', '软件', '网络', '机械', '电气', '电子', '自动化', '土木', '化学', '生物', '数学', '物理', '工程', '材料', '能源', '车辆', '水利', '测绘', '食品', '环境', '园林', '农业', '动物', '植物', '智能建造'];
+  for (const kw of artsKeywords) {
+    if (majorName.includes(kw)) return 'arts';
+  }
+  for (const kw of scienceKeywords) {
+    if (majorName.includes(kw)) return 'science';
+  }
+  return 'both'; // 默认文理兼收
+}
+
+// ==================== 2026真题难度评估 ====================
+const ExamDifficulty2026 = {
+  arts: {
+    label: '文科',
+    subjects: [
+      { name: '大学语文', fullScore: 150, difficulty: 'easy', difficultyLabel: '中等偏易', avgShift: +7, desc: '选择题基础，默写名篇名句，作文"诚信"套路化强' },
+      { name: '英语', fullScore: 150, difficulty: 'medium', difficultyLabel: '中等', avgShift: +1, desc: '阅读适中，翻译句型常见，写作模板化' }
+    ],
+    // 文科公共课整体偏易 → 均分上升 → 总分线上涨
+    publicScoreShift: +8,   // 公共课偏易导致均分上升约8分
+    totalLineShift: +5      // 反映到总分录取线上涨约5分
+  },
+  science: {
+    label: '理科',
+    subjects: [
+      { name: '高等数学', fullScore: 150, difficulty: 'hard', difficultyLabel: '中等偏难', avgShift: -7, desc: '涉及多元函数/线性代数/概率论，计算量大，证明题有难度' },
+      { name: '英语', fullScore: 150, difficulty: 'medium', difficultyLabel: '中等', avgShift: +1, desc: '阅读适中，翻译句型常见，写作模板化' }
+    ],
+    // 理科公共课高数偏难 → 均分下降 → 总分线下降
+    publicScoreShift: -6,   // 公共课偏难导致均分下降约6分
+    totalLineShift: -4      // 反映到总分录取线下降约4分
+  }
+};
+
+// ==================== 预测模型核心 ====================
+const PredictionModel = {
+  ELASTICITY: 2.5,
+  CORRELATION: 0.575,
+  TREND_WEIGHTS: { '2023_2024': 0.3, '2024_2025': 0.7 },
+
+  predict(record, category) {
+    const d = record.data;
+    const score2025 = d['2025'].score;
+    const ratio2026 = d['2026'].ratio;
+    const ratio2025 = d['2025'].ratio;
+
+    if (score2025 === null) {
+      return this._predictWithoutBase(record, category);
+    }
+
+    // 1. 报录比变化调整
+    let ratioAdjust = 0;
+    if (ratio2025 !== null && ratio2026 !== null && ratio2025 > 0) {
+      const ratioChangePct = (ratio2026 - ratio2025) / ratio2025;
+      ratioAdjust = ratioChangePct * this.ELASTICITY * this.CORRELATION * 10;
+    }
+
+    // 2. 趋势修正
+    let trendAdjust = 0;
+    const score2024 = d['2024'].score;
+    const score2023 = d['2023'].score;
+    let trendCount = 0;
+    if (score2024 !== null) {
+      trendAdjust += (score2025 - score2024) * this.TREND_WEIGHTS['2024_2025'];
+      trendCount += this.TREND_WEIGHTS['2024_2025'];
+    }
+    if (score2023 !== null && score2024 !== null) {
+      trendAdjust += (score2024 - score2023) * this.TREND_WEIGHTS['2023_2024'];
+      trendCount += this.TREND_WEIGHTS['2023_2024'];
+    }
+    if (trendCount > 0) {
+      trendAdjust = trendAdjust / trendCount * 0.5;
+    }
+
+    // 3. 招生计划变化调整
+    let planAdjust = 0;
+    const plan2025 = d['2025'].plan;
+    const plan2026 = d['2026'].plan;
+    if (plan2025 !== null && plan2026 !== null && plan2025 > 0) {
+      const planChangePct = (plan2026 - plan2025) / plan2025;
+      planAdjust = -planChangePct * 5;
+    }
+
+    // 4. 极端报录比修正
+    let extremeAdjust = 0;
+    if (ratio2026 !== null) {
+      if (ratio2026 < 0.5) extremeAdjust = -30;
+      else if (ratio2026 < 1.0) extremeAdjust = -15;
+      else if (ratio2026 > 5.0) extremeAdjust = 20;
+    }
+
+    // 5. 真题难度修正（核心新增）
+    let difficultyAdjust = 0;
+    if (category && ExamDifficulty2026[category]) {
+      difficultyAdjust = ExamDifficulty2026[category].totalLineShift;
+    }
+
+    const predictedScore = Math.round((score2025 + ratioAdjust + trendAdjust + planAdjust + extremeAdjust + difficultyAdjust) * 10) / 10;
+
+    return {
+      predictedScore: Math.max(0, predictedScore),
+      baseScore: score2025,
+      ratioAdjust: Math.round(ratioAdjust * 10) / 10,
+      trendAdjust: Math.round(trendAdjust * 10) / 10,
+      planAdjust: Math.round(planAdjust * 10) / 10,
+      extremeAdjust: Math.round(extremeAdjust * 10) / 10,
+      difficultyAdjust: Math.round(difficultyAdjust * 10) / 10,
+      confidence: this._calcConfidence(record)
+    };
+  },
+
+  _predictWithoutBase(record, category) {
+    const d = record.data;
+    const ratio2026 = d['2026'].ratio;
+    let difficultyAdjust = 0;
+    if (category && ExamDifficulty2026[category]) {
+      difficultyAdjust = ExamDifficulty2026[category].totalLineShift;
+    }
+
+    if (d['2024'].score !== null) {
+      const estimated2025 = d['2024'].score + 58;
+      return {
+        predictedScore: Math.max(0, Math.round((estimated2025 + (ratio2026 > 1 ? 10 : -10) + difficultyAdjust) * 10) / 10),
+        baseScore: null,
+        estimatedBase: Math.round(estimated2025 * 10) / 10,
+        ratioAdjust: ratio2026 > 1 ? 10 : -10,
+        trendAdjust: 58,
+        planAdjust: 0,
+        extremeAdjust: 0,
+        difficultyAdjust: Math.round(difficultyAdjust * 10) / 10,
+        confidence: 'low'
+      };
+    }
+
+    return {
+      predictedScore: null,
+      baseScore: null,
+      ratioAdjust: 0,
+      trendAdjust: 0,
+      planAdjust: 0,
+      extremeAdjust: 0,
+      difficultyAdjust: 0,
+      confidence: 'none'
+    };
+  },
+
+  _calcConfidence(record) {
+    const d = record.data;
+    let score = 0;
+    if (d['2025'].score !== null) score += 40;
+    if (d['2024'].score !== null) score += 20;
+    if (d['2023'].score !== null) score += 10;
+    if (d['2025'].ratio !== null) score += 15;
+    if (d['2026'].ratio !== null) score += 15;
+    if (score >= 80) return 'high';
+    if (score >= 50) return 'medium';
+    return 'low';
+  },
+
+  getLevel(userScore, predictedScore) {
+    if (predictedScore === null) return { level: 'unknown', label: '数据不足', emoji: '⚪', class: '' };
+    const ratio = userScore / predictedScore;
+    if (ratio < 0.95) return { level: 'danger', label: '危险', emoji: '🔴', class: 'level-danger' };
+    if (ratio < 1.0) return { level: 'close', label: '接近', emoji: '🟡', class: 'level-close' };
+    if (ratio < 1.05) return { level: 'pass', label: '达标', emoji: '🟢', class: 'level-pass' };
+    return { level: 'safe', label: '超稳定', emoji: '🔵', class: 'level-safe' };
+  }
+};
+
+// ==================== 交互逻辑 ====================
+
+// 科类切换
+function onCategoryChange() {
+  updateScoreDisplay();
+  updateDifficultyDisplay();
+}
+
+// 动态更新真题难度展示区
+function updateDifficultyDisplay() {
+  const category = document.getElementById('categorySelect').value;
+  const container = document.getElementById('difficultyContent');
+
+  if (category === 'arts') {
+    container.innerHTML = `
+      <div class="diff-item">
+        <span class="subject-name">大学语文</span>
+        <span class="difficulty-badge difficulty-easy">中等偏易</span>
+        <span style="color:#64748b;font-size:0.82rem;">选择题基础，默写均为名篇名句，作文"诚信"套路化强，均分预计上升5-10分</span>
+      </div>
+      <div class="diff-item">
+        <span class="subject-name">英 语</span>
+        <span class="difficulty-badge difficulty-medium">中 等</span>
+        <span style="color:#64748b;font-size:0.82rem;">阅读适中，翻译句型常见，写作模板化强，均分预计持平微升</span>
+      </div>
+      <p style="margin-top:0.5rem;color:#1e3a8a;font-size:0.82rem;font-weight:500;">📊 文科公共课整体偏易 → 均分预计上升 → 录取线预测上浮约 +5 分</p>`;
+  } else {
+    container.innerHTML = `
+      <div class="diff-item">
+        <span class="subject-name">高等数学</span>
+        <span class="difficulty-badge difficulty-hard">中等偏难</span>
+        <span style="color:#64748b;font-size:0.82rem;">涉及多元函数/线性代数/概率论，计算量大，证明题有难度，均分预计下降5-10分</span>
+      </div>
+      <div class="diff-item">
+        <span class="subject-name">英 语</span>
+        <span class="difficulty-badge difficulty-medium">中 等</span>
+        <span style="color:#64748b;font-size:0.82rem;">阅读适中，翻译句型常见，写作模板化强，均分预计持平微升</span>
+      </div>
+      <p style="margin-top:0.5rem;color:#991b1b;font-size:0.82rem;font-weight:500;">📊 理科公共课整体偏难 → 均分预计下降 → 录取线预测下调约 -4 分</p>`;
+  }
+}
+
+// 实时计算总分
+const publicInput = document.getElementById('publicScoreInput');
+const majorInputEl = document.getElementById('majorInput');
+const majorScoreInput = document.getElementById('majorScoreInput');
+
+publicInput.addEventListener('input', updateScoreDisplay);
+majorScoreInput.addEventListener('input', updateScoreDisplay);
+
+function updateScoreDisplay() {
+  const pub = parseFloat(publicInput.value) || 0;
+  const maj = parseFloat(majorScoreInput.value) || 0;
+  const total = pub + maj;
+  const category = document.getElementById('categorySelect').value;
+
+  document.getElementById('totalDisplay').textContent = total > 0 ? total : '-';
+  document.getElementById('publicDisplay').textContent = pub > 0 ? pub : '-';
+  document.getElementById('majorDisplay').textContent = maj > 0 ? maj : '-';
+
+  if (total > 0 && ExamDifficulty2026[category]) {
+    const shift = ExamDifficulty2026[category].totalLineShift;
+    const shiftText = shift > 0 ? `+${shift}分（公共课偏易，录取线上调）` : `${shift}分（公共课偏难，录取线下调）`;
+    document.getElementById('difficultyDisplay').textContent = shiftText;
+  } else {
+    document.getElementById('difficultyDisplay').textContent = '待计算';
+  }
+}
+
+// 模糊搜索
+const suggestionsDiv = document.getElementById('suggestions');
+
+majorInputEl.addEventListener('input', function() {
+  const val = this.value.trim();
+  if (!val) {
+    suggestionsDiv.style.display = 'none';
+    // 清空专业时解锁科类选择
+    document.getElementById('categorySelect').disabled = false;
+    document.getElementById('categorySelect').style.opacity = '1';
+    document.getElementById('categoryHint').textContent = '';
+    document.getElementById('difficultyContent').innerHTML = '<p style="color:#64748b;">请先输入专业名称，系统将根据专业科类自动展示对应的真题难度分析</p>';
+    return;
+  }
+
+  // 根据输入内容实时更新科类
+  updateCategoryByMajor(val);
+
+  const matches = [];
+  const seen = new Set();
+  allData.forEach(r => {
+    if (r.major.includes(val) && !seen.has(r.major)) {
+      seen.add(r.major);
+      const schoolCount = allData.filter(x => x.major === r.major).length;
+      matches.push({ major: r.major, count: schoolCount });
+    }
+  });
+
+  if (matches.length === 0) {
+    suggestionsDiv.style.display = 'none';
+    return;
+  }
+
+  suggestionsDiv.innerHTML = matches.slice(0, 15).map(m => {
+    const cat = getMajorCategory(m.major);
+    const catLabel = cat === 'arts' ? '文科' : cat === 'science' ? '理科' : '文理兼收';
+    const catColor = cat === 'arts' ? '#4f46e5' : cat === 'science' ? '#dc2626' : '#059669';
+    return `<div onclick="selectMajor('${m.major.replace(/'/g, "\\'")}')">
+      <span class="major-name">${m.major}</span>
+      <span style="color:${catColor};font-size:0.75rem;font-weight:500;margin-left:0.3rem;">[${catLabel}]</span>
+      <span class="major-school"> · ${m.count}所院校招生</span>
+    </div>`;
+  }).join('');
+  suggestionsDiv.style.display = 'block';
+});
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.form-group')) {
+    suggestionsDiv.style.display = 'none';
+  }
+});
+
+function selectMajor(major) {
+  majorInputEl.value = major;
+  suggestionsDiv.style.display = 'none';
+  updateCategoryByMajor(major);
+}
+
+// 根据专业自动设置科类
+function updateCategoryByMajor(major) {
+  const category = getMajorCategory(major);
+  const select = document.getElementById('categorySelect');
+  const hint = document.getElementById('categoryHint');
+
+  if (category === 'arts') {
+    select.value = 'arts';
+    select.disabled = true;
+    select.style.opacity = '0.6';
+    hint.textContent = '（该专业仅招文科）';
+  } else if (category === 'science') {
+    select.value = 'science';
+    select.disabled = true;
+    select.style.opacity = '0.6';
+    hint.textContent = '（该专业仅招理科）';
+  } else {
+    select.disabled = false;
+    select.style.opacity = '1';
+    hint.textContent = '（文理兼收，请选择）';
+  }
+
+  updateScoreDisplay();
+  updateDifficultyDisplay();
+}
+
+// ==================== 预测主函数 ====================
+function predict() {
+  const major = majorInputEl.value.trim();
+  const publicScore = parseFloat(publicInput.value);
+  const majorScore = parseFloat(majorScoreInput.value);
+  const category = document.getElementById('categorySelect').value;
+
+  if (!major) { alert('请输入专业名称'); return; }
+  if (isNaN(publicScore) || publicScore <= 0) { alert('请输入有效的公共课预估总分'); return; }
+  if (publicScore > 300) { alert('公共课满分300分，请检查输入'); return; }
+  if (isNaN(majorScore) || majorScore <= 0) { alert('请输入有效的专业课预估总分'); return; }
+  if (majorScore > 300) { alert('专业课满分300分，请检查输入'); return; }
+
+  const totalScore = publicScore + majorScore;
+
+  // 模糊匹配
+  const matched = allData.filter(r => r.major.includes(major));
+  if (matched.length === 0) {
+    document.getElementById('resultSection').classList.add('show');
+    document.getElementById('matchSummary').innerHTML =
+      `未找到包含 "<strong>${major}</strong>" 的专业，请尝试其他关键词`;
+    document.getElementById('resultCards').innerHTML = '';
+    document.getElementById('filterRow').innerHTML = '';
+    document.getElementById('logicAnalysis').innerHTML = '';
+    return;
+  }
+
+  // 对每条记录进行预测（传入科类信息）
+  currentResults = matched.map(record => {
+    const pred = PredictionModel.predict(record, category);
+    const level = PredictionModel.getLevel(totalScore, pred.predictedScore);
+    return { record, pred, level, userScore: totalScore, publicScore, majorScore, category };
+  });
+
+  // 排序
+  const levelOrder = { safe: 0, pass: 1, close: 2, danger: 3, unknown: 4 };
+  currentResults.sort((a, b) => levelOrder[a.level.level] - levelOrder[b.level.level]);
+
+  renderResults(major, totalScore, publicScore, majorScore, category);
+}
+
+function renderResults(major, totalScore, publicScore, majorScore, category) {
+  const section = document.getElementById('resultSection');
+  section.classList.add('show');
+
+  const uniqueSchools = [...new Set(currentResults.map(r => r.record.school))];
+  const uniqueMajors = [...new Set(currentResults.map(r => r.record.major))];
+  const levelCounts = { safe: 0, pass: 0, close: 0, danger: 0, unknown: 0 };
+  currentResults.forEach(r => levelCounts[r.level.level]++);
+
+  const categoryLabel = category === 'arts' ? '文科' : '理科';
+  const diffInfo = ExamDifficulty2026[category];
+  const diffShiftText = diffInfo.totalLineShift > 0
+    ? `真题难度修正：公共课偏易，预测线整体上浮 <strong>+${diffInfo.totalLineShift}</strong> 分`
+    : `真题难度修正：公共课偏难，预测线整体下调 <strong>${diffInfo.totalLineShift}</strong> 分`;
+
+  document.getElementById('matchSummary').innerHTML =
+    `查询专业 "<strong>${major}</strong>"，科类 <strong>${categoryLabel}</strong>，预估公共课 <strong>${publicScore}</strong> 分 + 专业课 <strong>${majorScore}</strong> 分 = 总分 <strong>${totalScore}</strong> 分<br>
+     共匹配到 <strong>${uniqueSchools.length}</strong> 所院校的 <strong>${currentResults.length}</strong> 个专业条目
+     （精确匹配：${uniqueMajors.join('、')}）<br>
+     ${diffShiftText}<br>
+     <span class="level-stat level-stat-safe">🔵 超稳定 ${levelCounts.safe}</span>
+     <span class="level-stat level-stat-pass">🟢 达标 ${levelCounts.pass}</span>
+     <span class="level-stat level-stat-close">🟡 接近 ${levelCounts.close}</span>
+     <span class="level-stat level-stat-danger">🔴 危险 ${levelCounts.danger}</span>
+     ${levelCounts.unknown ? `<span class="level-stat level-stat-unknown">⚪ 数据不足 ${levelCounts.unknown}</span>` : ''}`;
+
+  // 等级筛选
+  const filterRow = document.getElementById('filterRow');
+  filterRow.innerHTML =
+    `<span class="filter-chip ${currentLevelFilter==='all'?'active':''}" onclick="filterLevel('all')">全部(${currentResults.length})</span>
+     <span class="filter-chip ${currentLevelFilter==='safe'?'active':''}" data-level="safe" onclick="filterLevel('safe')">🔵 超稳定(${levelCounts.safe})</span>
+     <span class="filter-chip ${currentLevelFilter==='pass'?'active':''}" data-level="pass" onclick="filterLevel('pass')">🟢 达标(${levelCounts.pass})</span>
+     <span class="filter-chip ${currentLevelFilter==='close'?'active':''}" data-level="close" onclick="filterLevel('close')">🟡 接近(${levelCounts.close})</span>
+     <span class="filter-chip ${currentLevelFilter==='danger'?'active':''}" data-level="danger" onclick="filterLevel('danger')">🔴 危险(${levelCounts.danger})</span>`;
+
+  renderCards();
+  renderLogic(major, totalScore, publicScore, majorScore, category, levelCounts);
+}
+
+function renderCards() {
+  const container = document.getElementById('resultCards');
+  const filtered = currentLevelFilter === 'all'
+    ? currentResults
+    : currentResults.filter(r => r.level.level === currentLevelFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="no-data">该等级下无匹配结果</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map((item) => {
+    const r = item.record;
+    const p = item.pred;
+    const l = item.level;
+    const d = r.data;
+
+    const confidenceLabel = { high: '高', medium: '中', low: '低', none: '无' };
+    const confidenceColor = { high: '#10b981', medium: '#f59e0b', low: '#ef4444', none: '#94a3b8' };
+
+    // 历史数据行
+    let historyRows = '';
+    ['2023', '2024', '2025'].forEach(year => {
+      const dd = d[year];
+      if (dd.plan !== null || dd.ratio !== null || dd.score !== null) {
+        const scoreClass = dd.score !== null && d['2025'].score !== null && dd.score < d['2025'].score ? 'score-down' :
+                           dd.score !== null && d['2025'].score !== null && dd.score > d['2025'].score ? 'score-up' : '';
+        historyRows += `<tr>
+          <td>${year}</td>
+          <td>${dd.plan !== null ? dd.plan : '-'}</td>
+          <td>${dd.ratio !== null ? dd.ratio : '-'}</td>
+          <td class="${scoreClass}">${dd.score !== null ? dd.score : '-'}</td>
+        </tr>`;
+      }
+    });
+
+    // 2026预测行
+    const predScoreDisplay = p.predictedScore !== null ? p.predictedScore : '数据不足';
+
+    // 大号差值块
+    let diffBlock = '';
+    if (p.predictedScore !== null) {
+      const diff = item.userScore - p.predictedScore;
+      const isPositive = diff >= 0;
+      diffBlock = `<div class="score-diff ${isPositive ? 'score-diff-positive' : 'score-diff-negative'}">
+        <span class="diff-value">${isPositive ? '+' : ''}${diff.toFixed(1)}分</span>
+        <span class="diff-label">${isPositive ? '高于预测线' : '低于预测线'}</span>
+      </div>`;
+    }
+
+    // 分数对比条
+    let barHtml = '';
+    if (p.predictedScore !== null && p.predictedScore > 0) {
+      const maxScore = Math.max(item.userScore, p.predictedScore) * 1.2;
+      const userPct = Math.min(100, (item.userScore / maxScore) * 100);
+      const predPct = Math.min(100, (p.predictedScore / maxScore) * 100);
+      const barColor = l.level === 'safe' ? '#3b82f6' : l.level === 'pass' ? '#10b981' : l.level === 'close' ? '#f59e0b' : '#ef4444';
+      barHtml = `<div class="comparison-bar">
+        <div class="fill" style="width:${userPct}%;background:${barColor};"></div>
+        <div class="marker" style="left:${predPct}%;"></div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:${barColor};"></div> 你的总分：${item.userScore}（公共${item.publicScore}+专业${item.majorScore}）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1e293b;"></div> 预测线：${p.predictedScore}</div>
+      </div>`;
+    }
+
+    // 调整因子明细
+    let adjustDetail = '';
+    if (p.predictedScore !== null) {
+      adjustDetail = `<div class="prediction-box">
+        <div class="pred-detail">
+          📊 基准分(2025)：${p.baseScore !== null ? p.baseScore : '估算' + (p.estimatedBase || '-')}
+          ${p.ratioAdjust !== 0 ? ` | 报录比调整：${p.ratioAdjust > 0 ? '+' : ''}${p.ratioAdjust}` : ''}
+          ${p.trendAdjust !== 0 ? ` | 趋势修正：${p.trendAdjust > 0 ? '+' : ''}${p.trendAdjust}` : ''}
+          ${p.planAdjust !== 0 ? ` | 计划调整：${p.planAdjust > 0 ? '+' : ''}${p.planAdjust}` : ''}
+          ${p.extremeAdjust !== 0 ? ` | 极端值修正：${p.extremeAdjust > 0 ? '+' : ''}${p.extremeAdjust}` : ''}
+          ${p.difficultyAdjust !== 0 ? ` | 📝真题难度修正：${p.difficultyAdjust > 0 ? '+' : ''}${p.difficultyAdjust}` : ''}
+          <br>📐 置信度：<span style="color:${confidenceColor[p.confidence]}">${confidenceLabel[p.confidence]}</span>
+        </div>
+      </div>`;
+    }
+
+    return `<div class="result-card level-card-${l.level}" data-level="${l.level}" data-pred="${p.predictedScore || 0}" data-school="${r.school}" data-ratio="${d['2026'].ratio || 0}">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+        <div>
+          <div class="school-name">${r.school}</div>
+          <span class="major-name-tag">${r.major}</span>
+        </div>
+        <span class="level-badge ${l.class}"><span class="level-emoji">${l.emoji}</span> ${l.label}</span>
+      </div>
+      ${barHtml}
+      ${diffBlock}
+      <table class="data-table">
+        <thead><tr><th>年份</th><th>招生计划</th><th>报录比</th><th>录取分数</th></tr></thead>
+        <tbody>
+          ${historyRows}
+          <tr style="background:#f0f0ff;">
+            <td><strong>2026(预测)</strong></td>
+            <td class="highlight">${d['2026'].plan}</td>
+            <td class="highlight">${d['2026'].ratio !== null ? d['2026'].ratio : '-'}</td>
+            <td class="highlight">${predScoreDisplay}</td>
+          </tr>
+        </tbody>
+      </table>
+      ${adjustDetail}
+    </div>`;
+  }).join('');
+}
+
+function renderLogic(major, totalScore, publicScore, majorScore, category, levelCounts) {
+  const container = document.getElementById('logicAnalysis');
+  const safeItems = currentResults.filter(r => r.level.level === 'safe');
+  const passItems = currentResults.filter(r => r.level.level === 'pass');
+  const closeItems = currentResults.filter(r => r.level.level === 'close');
+  const dangerItems = currentResults.filter(r => r.level.level === 'danger');
+  const unknownItems = currentResults.filter(r => r.level.level === 'unknown');
+
+  const categoryLabel = category === 'arts' ? '文科' : '理科';
+  const diffInfo = ExamDifficulty2026[category];
+
+  let analysis = `<div class="logic-section">
+    <h3>📋 综合分析报告</h3>
+    <p><strong>一、匹配概况</strong></p>
+    <p>针对专业关键词"${major}"，科类${categoryLabel}，预估公共课${publicScore}分 + 专业课${majorScore}分 = 总分${totalScore}分，系统在${new Set(currentResults.map(r=>r.record.school)).size}所院校中找到${currentResults.length}个招生专业条目。</p>`;
+
+  // 真题难度分析
+  analysis += `<p><br><strong>二、2026真题难度影响分析</strong></p>
+    <p>你选择的科类为<strong>${categoryLabel}</strong>，2026年${categoryLabel}公共课真题难度评估如下：</p>
+    <div class="formula" style="border-left-color:#3b82f6;">`;
+  
+  diffInfo.subjects.forEach(s => {
+    const diffIcon = s.difficulty === 'easy' ? '🟢 偏易' : s.difficulty === 'hard' ? '🔴 偏难' : '🟡 中等';
+    analysis += `${s.name}（满分${s.fullScore}分）：${diffIcon} → 预计均分变化${s.avgShift > 0 ? '+' : ''}${s.avgShift}分 | ${s.desc}<br>`;
+  });
+  
+  analysis += `<br>📊 综合推算：${categoryLabel}公共课整体${diffInfo.publicScoreShift > 0 ? '偏易' : '偏难'}，预计公共课均分${diffInfo.publicScoreShift > 0 ? '上升' : '下降'}约${Math.abs(diffInfo.publicScoreShift)}分<br>`;
+  analysis += `📈 对录取线影响：预测线${diffInfo.totalLineShift > 0 ? '上浮' : '下调'} ${Math.abs(diffInfo.totalLineShift)} 分（公共课${diffInfo.publicScoreShift > 0 ? '偏易→考生均分上升→竞争推高总分线' : '偏难→考生均分下降→竞争缓解总分线'}）</div>`;
+
+  // 公共课/专业课分拆分析
+  const publicAvgRate = publicScore / 300;
+  const majorAvgRate = majorScore / 300;
+  const publicDesc = publicAvgRate >= 0.7 ? '较强' : publicAvgRate >= 0.5 ? '中等' : '偏弱';
+  const majorDesc = majorAvgRate >= 0.7 ? '较强' : majorAvgRate >= 0.5 ? '中等' : '偏弱';
+
+  analysis += `<p><br><strong>三、分科表现分析</strong></p>
+    <p>你的公共课得分率 <strong>${(publicAvgRate * 100).toFixed(1)}%</strong>（${publicDesc}），专业课得分率 <strong>${(majorAvgRate * 100).toFixed(1)}%</strong>（${majorDesc}）。</p>`;
+  
+  if (publicAvgRate > majorAvgRate + 0.1) {
+    analysis += `<p>💡 你的公共课明显优于专业课。在2026年${categoryLabel}公共课${diffInfo.publicScoreShift > 0 ? '偏易' : '偏难'}的背景下，你的公共课优势${diffInfo.publicScoreShift > 0 ? '能得到更好发挥' : '可能被拉大差距'}，建议${diffInfo.publicScoreShift > 0 ? '保持优势的同时关注专业课突破' : '重点强化公共课基础以弥补难度带来的影响'}。</p>`;
+  } else if (majorAvgRate > publicAvgRate + 0.1) {
+    analysis += `<p>💡 你的专业课明显优于公共课。2026年${categoryLabel}公共课${diffInfo.publicScoreShift > 0 ? '偏易' : '偏难'}，${diffInfo.publicScoreShift > 0 ? '有利于你的公共课提分' : '你的公共课可能成为短板'}，建议${diffInfo.publicCodeShift > 0 ? '利用公共课偏易的机会进一步拉开差距' : '在公共课上投入更多精力以保住基本盘'}。</p>`;
+  } else {
+    analysis += `<p>💡 你的公共课和专业课表现比较均衡。建议根据真题难度调整备考重心：2026年${categoryLabel}公共课${diffInfo.publicScoreShift > 0 ? '偏易，是提分好机会' : '偏难，需要重点攻克'}。</p>`;
+  }
+
+  if (unknownItems.length > 0) {
+    analysis += `<p><br><strong>⚠️ 数据不足条目（${unknownItems.length}个）</strong></p>
+    <p>${unknownItems.map(r => `${r.record.school}·${r.record.major}`).join('、')}——这些专业缺少历年录取分数数据，无法进行有效预测。建议关注其2026年报录比，若报录比<1则竞争较小。</p>`;
+  }
+
+  if (dangerItems.length > 0) {
+    analysis += `<p><br><span class="level-heading level-heading-danger">🔴 危险区间分析（${dangerItems.length}个）</span></p>
+    <p>你的总分(${totalScore}分)低于以下专业预测线的95%，录取可能性较低：</p>
+    <div class="formula" style="border-left-color:#ef4444;">`;
+    dangerItems.forEach(r => {
+      if (r.pred.predictedScore !== null) {
+        const gap = (r.userScore - r.pred.predictedScore).toFixed(1);
+        analysis += `${r.record.school}·${r.record.major}：预测线${r.pred.predictedScore}分，差距${gap}分 | 2026报录比${r.record.data['2026'].ratio || '-'}<br>`;
+      }
+    });
+    analysis += `</div>
+    <p>建议：这些专业2026年报录比较高，竞争激烈，如果决心报考需做好充分准备或考虑更稳妥的选择。</p>`;
+  }
+
+  if (closeItems.length > 0) {
+    analysis += `<p><br><span class="level-heading level-heading-close">🟡 接近区间分析（${closeItems.length}个）</span></p>
+    <p>你的总分接近预测线但未达到，属于"擦线"区间，存在一定风险：</p>
+    <div class="formula" style="border-left-color:#f59e0b;">`;
+    closeItems.forEach(r => {
+      if (r.pred.predictedScore !== null) {
+        const gap = (r.pred.predictedScore - r.userScore).toFixed(1);
+        analysis += `${r.record.school}·${r.record.major}：预测线${r.pred.predictedScore}分，仅差${gap}分 | 2026报录比${r.record.data['2026'].ratio || '-'}<br>`;
+      }
+    });
+    analysis += `</div>
+    <p>建议：这些专业属于"冲一冲"的范围，可以报考但建议搭配更稳妥的专业作为保底。</p>`;
+  }
+
+  if (passItems.length > 0) {
+    analysis += `<p><br><span class="level-heading level-heading-pass">🟢 达标区间分析（${passItems.length}个）</span></p>
+    <p>你的总分达到或略超预测线，录取概率较大：</p>
+    <div class="formula" style="border-left-color:#10b981;">`;
+    passItems.forEach(r => {
+      if (r.pred.predictedScore !== null) {
+        const over = (r.userScore - r.pred.predictedScore).toFixed(1);
+        analysis += `${r.record.school}·${r.record.major}：预测线${r.pred.predictedScore}分，超出${over}分 | 2026报录比${r.record.data['2026'].ratio || '-'}<br>`;
+      }
+    });
+    analysis += `</div>
+    <p>建议：这些专业是比较稳妥的选择，但仍需关注实际报考情况可能带来的波动。</p>`;
+  }
+
+  if (safeItems.length > 0) {
+    analysis += `<p><br><span class="level-heading level-heading-safe">🔵 超稳定区间分析（${safeItems.length}个）</span></p>
+    <p>你的总分远超预测线，录取概率极高：</p>
+    <div class="formula" style="border-left-color:#3b82f6;">`;
+    safeItems.forEach(r => {
+      if (r.pred.predictedScore !== null) {
+        const over = (r.userScore - r.pred.predictedScore).toFixed(1);
+        analysis += `${r.record.school}·${r.record.major}：预测线${r.pred.predictedScore}分，超出${over}分 | 2026报录比${r.record.data['2026'].ratio || '-'}<br>`;
+      }
+    });
+    analysis += `</div>
+    <p>建议：这些专业可以作为保底志愿，确保有学可上。但也要考虑是否愿意接受该专业。</p>`;
+  }
+
+  // 综合策略
+  analysis += `<p><br><strong>四、报考策略建议</strong></p>`;
+
+  if (safeItems.length > 0 && passItems.length > 0) {
+    analysis += `<p>你的分数在多个专业中具有竞争力。建议采用"冲-稳-保"策略：选择1-2个接近或达标的"冲"的专业，搭配2-3个达标的"稳"的专业，再选1-2个超稳定的"保"的专业。</p>`;
+  } else if (closeItems.length > 0 && passItems.length === 0) {
+    analysis += `<p>你的分数目前处于"擦线"区间，建议重点关注报录比较低的专业，降低竞争风险。同时考虑是否有其他备选专业。</p>`;
+  } else if (dangerItems.length === currentResults.filter(r => r.level.level !== 'unknown').length) {
+    analysis += `<p>你的分数在当前匹配专业中均处于危险区间，建议：1）重新评估分数预期；2）考虑报录比<1的专业（竞争较小）；3）扩大专业搜索范围。</p>`;
+  } else {
+    analysis += `<p>请根据以上各等级分析，结合个人兴趣和风险承受能力，合理选择报考专业。</p>`;
+  }
+
+  // 真题难度专项建议
+  analysis += `<p><br><strong>五、基于真题难度的备考建议</strong></p>`;
+  if (category === 'arts') {
+    analysis += `<p>2026年文科公共课整体偏易，这意味着：<br>
+    • 语文偏易 → 考生均分上升 → 公共课分差缩小 → 专业课成为拉开差距的关键<br>
+    • 英语中等 → 稳定发挥即可，不建议过度投入<br>
+    • 建议：在公共课偏易的年份，专业课的分数差异对录取结果影响更大，应重点攻克专业课<br>
+    • 预测线已上浮${Math.abs(diffInfo.totalLineShift)}分，反映公共课偏易带来的竞争加剧</p>`;
+  } else {
+    analysis += `<p>2026年理科公共课整体偏难，这意味着：<br>
+    • 高数偏难 → 考生均分下降 → 公共课分差拉大 → 高数成为分水岭科目<br>
+    • 英语中等 → 稳定发挥即可，可作为拉分项<br>
+    • 建议：在公共课偏难的年份，高数成绩对录取结果的影响显著增大，基础扎实的考生更具优势<br>
+    • 预测线已下调${Math.abs(diffInfo.totalLineShift)}分，反映公共课偏难带来的竞争缓解</p>`;
+  }
+
+  analysis += `<p><br><strong>六、模型局限性说明</strong></p>
+    <p>1. 本模型基于历史数据的统计规律，实际录取分数受当年试题难度、报考人数、政策变化等因素影响。</p>
+    <p>2. 真题难度修正基于回忆版试卷的定性评估，实际难度感受因人而异。</p>
+    <p>3. 部分专业历史数据缺失较多，预测置信度较低，结果仅供参考。</p>
+    <p>4. 报录比数据为预估值，实际报录比可能有变化。</p>
+    <p>5. 建议结合官方发布的招生政策、历年分数线等多方信息综合判断。</p>
+  </div>`;
+
+  container.innerHTML = analysis;
+}
+
+// 排序
+function sortResults(by, btn) {
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const levelOrder = { safe: 0, pass: 1, close: 2, danger: 3, unknown: 4 };
+  switch(by) {
+    case 'level':
+      currentResults.sort((a,b) => levelOrder[a.level.level] - levelOrder[b.level.level]);
+      break;
+    case 'predScore':
+      currentResults.sort((a,b) => (b.pred.predictedScore || 999) - (a.pred.predictedScore || 999));
+      break;
+    case 'school':
+      currentResults.sort((a,b) => a.record.school.localeCompare(b.record.school, 'zh'));
+      break;
+    case 'ratio2026':
+      currentResults.sort((a,b) => (a.record.data['2026'].ratio || 0) - (b.record.data['2026'].ratio || 0));
+      break;
+  }
+  renderCards();
+}
+
+// 等级筛选
+function filterLevel(level) {
+  currentLevelFilter = level;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  renderCards();
+}
+
+// 回车触发
+document.getElementById('majorInput').addEventListener('keydown', e => { if(e.key==='Enter') predict(); });
+document.getElementById('publicScoreInput').addEventListener('keydown', e => { if(e.key==='Enter') predict(); });
+document.getElementById('majorScoreInput').addEventListener('keydown', e => { if(e.key==='Enter') predict(); });
+</script>
+</body>
+</html>

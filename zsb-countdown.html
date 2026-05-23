@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安徽省专升本考试倒计时</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(1, 47, 167, 0.15);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #012fa7, #2a5fd8);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            color: #012fa7;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(1, 47, 167, 0.1);
+            word-break: keep-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .exam-info {
+            background: linear-gradient(135deg, rgba(1, 47, 167, 0.05) 0%, rgba(1, 47, 167, 0.02) 100%);
+            border-left: 4px solid #012fa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .exam-info h3 {
+            color: #012fa7;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            color: #012fa7;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .countdown {
+            margin: 40px 0;
+        }
+
+        .countdown-title {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .timer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            background: linear-gradient(145deg, #ffffff, #f0f4ff);
+            border-radius: 15px;
+            padding: 20px 10px;
+            flex: 1;
+            min-width: 0;
+            max-width: 140px;
+            box-shadow: 0 8px 20px rgba(1, 47, 167, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .time-unit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #012fa7, #2a5fd8);
+        }
+
+        .time-unit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(1, 47, 167, 0.15);
+        }
+
+        .time-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #012fa7;
+            line-height: 1;
+            margin-bottom: 5px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .time-label {
+            font-size: 0.95rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .progress-container {
+            margin-top: 40px;
+        }
+
+        .progress-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background-color: #f0f4ff;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #012fa7, #2a5fd8);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .motivation {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(1, 47, 167, 0.08) 0%, rgba(1, 47, 167, 0.04) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(1, 47, 167, 0.1);
+        }
+
+        .motivation h3 {
+            color: #012fa7;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .motivation p {
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: #888;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .title {
+                font-size: 2.4rem;
+            }
+            
+            .time-unit {
+                padding: 18px 8px;
+                max-width: 120px;
+            }
+            
+            .time-value {
+                font-size: 2.4rem;
+            }
+            
+            .timer {
+                gap: 15px;
+            }
+            
+            .exam-info {
+                padding: 18px;
+            }
+            
+            .motivation {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px 20px;
+                border-radius: 18px;
+            }
+            
+            .title {
+                font-size: 2.1rem;
+                letter-spacing: 0.5px;
+                margin-bottom: 8px;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 20px;
+            }
+            
+            .time-unit {
+                padding: 16px 6px;
+                max-width: 100px;
+                border-radius: 12px;
+            }
+            
+            .time-value {
+                font-size: 2rem;
+            }
+            
+            .time-label {
+                font-size: 0.9rem;
+                letter-spacing: 0.3px;
+            }
+            
+            .timer {
+                gap: 12px;
+            }
+            
+            .exam-info {
+                padding: 16px;
+                margin: 25px 0;
+            }
+            
+            .exam-info h3 {
+                font-size: 1.2rem;
+            }
+            
+            .motivation {
+                padding: 18px;
+                margin-top: 30px;
+            }
+            
+            .motivation h3 {
+                font-size: 1.2rem;
+            }
+            
+            .motivation p {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+            
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 10px;
+            }
+            
+            .container {
+                padding: 20px 16px;
+                border-radius: 16px;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+                margin-bottom: 6px;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 18px;
+            }
+            
+            .time-unit {
+                padding: 14px 5px;
+                max-width: 85px;
+                border-radius: 10px;
+            }
+            
+            .time-value {
+                font-size: 1.8rem;
+            }
+            
+            .time-label {
+                font-size: 0.85rem;
+            }
+            
+            .timer {
+                gap: 10px;
+            }
+            
+            .countdown {
+                margin: 30px 0;
+            }
+            
+            .countdown-title {
+                font-size: 1.2rem;
+                margin-bottom: 20px;
+            }
+            
+            .exam-info {
+                padding: 14px;
+                margin: 20px 0;
+                border-left-width: 3px;
+            }
+            
+            .exam-info h3 {
+                font-size: 1.1rem;
+                margin-bottom: 8px;
+            }
+            
+            .info-item {
+                font-size: 0.95rem;
+                margin-bottom: 6px;
+            }
+            
+            .progress-container {
+                margin-top: 30px;
+            }
+            
+            .progress-title {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+            
+            .progress-bar {
+                height: 10px;
+            }
+            
+            .progress-text {
+                font-size: 0.85rem;
+                margin-top: 8px;
+            }
+            
+            .motivation {
+                padding: 16px;
+                margin-top: 25px;
+                border-radius: 12px;
+            }
+            
+            .motivation h3 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+            
+            .motivation p {
+                font-size: 0.95rem;
+            }
+            
+            .footer {
+                margin-top: 25px;
+                padding-top: 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .title {
+                font-size: 1.7rem;
+            }
+            
+            .time-unit {
+                padding: 12px 4px;
+                max-width: 75px;
+            }
+            
+            .time-value {
+                font-size: 1.6rem;
+            }
+            
+            .time-label {
+                font-size: 0.8rem;
+            }
+            
+            .timer {
+                gap: 8px;
+            }
+            
+            .exam-info {
+                padding: 12px;
+            }
+            
+            .info-item {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 控制移动端换行 */
+        .mobile-break {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-break {
+                display: inline;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .title {
+                font-size: 1.6rem;
+                white-space: normal;
+                word-break: break-word;
+                text-overflow: clip;
+            }
+            
+            .time-unit {
+                padding: 10px 3px;
+                max-width: 68px;
+            }
+            
+            .time-value {
+                font-size: 1.5rem;
+            }
+            
+            .timer {
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">安徽省专升本<br class="mobile-break">考试倒计时</h1>
+            <p class="subtitle">全力以赴，备战2026年安徽省普通高校专升本招生考试</p>
+        </div>
+
+        <div class="exam-info">
+            <h3>考试信息</h3>
+            <div class="info-item">
+                <span class="info-icon">📅</span>
+                <span><strong>考试时间：</strong>2026年4月18日</span>
+            </div>
+            <div class="info-item">
+                <span class="info-icon">📍</span>
+                <span><strong>考试地点：</strong>安徽省各市指定考点</span>
+            </div>
+            <div class="info-item">
+                <span class="info-icon">🎯</span>
+                <span><strong>考试科目：</strong>公共课+专业课（具体以招生院校公布为准）</span>
+            </div>
+        </div>
+
+        <div class="countdown">
+            <h2 class="countdown-title">距离考试还有</h2>
+            <div class="timer">
+                <div class="time-unit">
+                    <div class="time-value" id="days">00</div>
+                    <div class="time-label">天</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="hours">00</div>
+                    <div class="time-label">小时</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="minutes">00</div>
+                    <div class="time-label">分钟</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="seconds">00</div>
+                    <div class="time-label">秒</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <h3 class="progress-title">备考进度</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                <span id="progressStart">备考开始</span>
+                <span id="progressEnd">考试日</span>
+            </div>
+        </div>
+
+        <div class="motivation">
+            <h3>备考寄语</h3>
+            <p>"宝剑锋从磨砺出，梅花香自苦寒来。专升本之路虽然艰辛，但每一步都离梦想更近。坚持每日学习，合理安排时间，相信付出终有回报。祝你金榜题名，前程似锦！"</p>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 安徽省专升本考试倒计时 | 主题色：#012fa7 | 数据实时更新</p>
+            <p>提示：倒计时数据仅供参考，具体考试时间以官方公布为准</p>
+        </div>
+    </div>
+
+    <script>
+        // 设置考试日期：2026年4月18日
+        const examDate = new Date('2026-04-18T00:00:00');
+        // 假设备考开始日期为2025年9月1日（新学期开始）
+        const startDate = new Date('2025-09-01T00:00:00');
+        
+        function updateCountdown() {
+            const now = new Date();
+            const timeRemaining = examDate - now;
+            
+            if (timeRemaining <= 0) {
+                // 考试已开始或结束
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                
+                document.querySelector('.countdown-title').textContent = '考试已开始！';
+                document.querySelector('.motivation p').textContent = '考试正在进行中，祝所有考生考试顺利，发挥出色！';
+                return;
+            }
+            
+            // 计算天数、小时、分钟、秒
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            
+            // 更新显示
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // 更新备考进度条
+            updateProgressBar(now);
+        }
+        
+        function updateProgressBar(currentDate) {
+            const totalDuration = examDate - startDate;
+            const elapsedDuration = currentDate - startDate;
+            
+            // 计算进度百分比（0-100%）
+            let progressPercent = (elapsedDuration / totalDuration) * 100;
+            
+            // 限制在0-100%范围内
+            progressPercent = Math.max(0, Math.min(100, progressPercent));
+            
+            // 更新进度条
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            
+            // 更新进度文本
+            const daysFromStart = Math.floor(elapsedDuration / (1000 * 60 * 60 * 24));
+            const totalDays = Math.floor(totalDuration / (1000 * 60 * 60 * 24));
+            const daysRemaining = Math.max(0, totalDays - daysFromStart);
+            
+            document.getElementById('progressStart').textContent = `第${Math.max(0, daysFromStart)}天`;
+            document.getElementById('progressEnd').textContent = `剩余${daysRemaining}天`;
+            
+            // 根据进度改变进度条颜色
+            const progressFill = document.getElementById('progressFill');
+            if (progressPercent < 30) {
+                progressFill.style.background = 'linear-gradient(90deg, #012fa7, #2a5fd8)';
+            } else if (progressPercent < 70) {
+                progressFill.style.background = 'linear-gradient(90deg, #2a5fd8, #4a7ae8)';
+            } else {
+                progressFill.style.background = 'linear-gradient(90deg, #4a7ae8, #6a9af8)';
+            }
+        }
+        
+        // 初始化倒计时
+        updateCountdown();
+        
+        // 每秒更新一次
+        setInterval(updateCountdown, 1000);
+        
+        // 页面加载完成后初始化进度条
+        window.addEventListener('load', () => {
+            updateProgressBar(new Date());
+            
+            // 添加一些动画效果
+            const timeUnits = document.querySelectorAll('.time-unit');
+            timeUnits.forEach((unit, index) => {
+                unit.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

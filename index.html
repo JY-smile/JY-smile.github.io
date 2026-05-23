@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专升本合集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 1080px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-box::placeholder {
+            color: #999;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 22px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .link-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .link-item .icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .link-item.hidden {
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 18px;
+            display: none;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .link-item {
+                padding: 14px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+       
+        <h1>🔗 安徽省普高专升本考试招生院校快速查询</h1>
+        <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索院校名称...">
+        <div class="no-results" id="noResults">安徽省普高专升本考试招生院校快速查询</div>
+        <div class="links-grid" id="linksGrid">
+            <a href="./demo1/index.html" target="_blank" class="link-item"><span class="icon">🎇</span>院校合集</a>
+            <a href="./demo2/index.html" target="_blank" class="link-item"><span class="icon">🚆</span>报考合集</a>
+            <a href="./demo3/index.html" target="_blank" class="link-item"><span class="icon">✈</span>大类合集</a>
+            <a href="./aipig/index.html" target="_blank" class="link-item"><span class="icon">🍎</span>AI is pig</a>
+            <a href="./demo5/index.html" target="_blank" class="link-item"><span class="icon">🍑</span>分数预测</a>
+            <a href="#" target="_blank" class="link-item"><span class="icon">🐎</span>微信：Codedocky</a>
+            <a href="https://zs.ahut.edu.cn/" target="_blank" class="link-item"><span class="icon">1、</span>安徽工业大学</a>
+            <a href="https://zsb.ahau.edu.cn/tzgg.htm" target="_blank" class="link-item"><span class="icon">2、</span>安徽农业大学</a>
+            <a href="https://zs.ahmu.edu.cn/zsb/list.htm" target="_blank" class="link-item"><span class="icon">3、</span>安徽医科大学</a>
+            <a href="https://zsxx.ahnu.edu.cn/zsxx/tzgg.htm" target="_blank" class="link-item"><span class="icon">4、</span>安徽师范大学</a>
+            <a href="https://www.ahjzu.edu.cn/zsw/" target="_blank" class="link-item"><span class="icon">5、</span>安徽建筑大学</a>
+            <a href="https://zsjy.aufe.edu.cn/" target="_blank" class="link-item"><span class="icon">6、</span>安徽财经大学</a>
+            <a href="https://bkzs.ahtcm.edu.cn/" target="_blank" class="link-item"><span class="icon">7、</span>安徽中医药大学</a>
+            <a href="https://www.fynu.edu.cn/bkzsxxw/" target="_blank" class="link-item"><span class="icon">8、</span>阜阳师范大学</a>
+            <a href="https://zsw.aqnu.edu.cn/zsxx/zszc1.htm" target="_blank" class="link-item"><span class="icon">9、</span>安庆师范大学</a>
+            <a href="https://zsw.bbmu.edu.cn/" target="_blank" class="link-item"><span class="icon">10、</span>蚌埠医科大学</a>
+            <a href="https://zsb.wnmc.edu.cn/" target="_blank" class="link-item"><span class="icon">11、</span>皖南医学院</a>
+            <a href="https://zsb.hnnu.edu.cn/" target="_blank" class="link-item"><span class="icon">12、</span>淮南师范学院</a>
+            <a href="https://www.ahstu.edu.cn/zsc/" target="_blank" class="link-item"><span class="icon">13、</span>安徽科技学院</a>
+            <a href="https://zsb.wxc.edu.cn/" target="_blank" class="link-item"><span class="icon">14、</span>皖西学院</a>
+            <a href="https://www.hfuu.edu.cn/zs/" target="_blank" class="link-item"><span class="icon">15、</span>合肥大学</a>
+            <a href="https://zsb.hsu.edu.cn/" target="_blank" class="link-item"><span class="icon">16、</span>黄山学院</a>
+            <a href="https://www.chu.edu.cn/zsw/" target="_blank" class="link-item"><span class="icon">17、</span>巢湖学院</a>
+            <a href="https://zsb.tlu.edu.cn/" target="_blank" class="link-item"><span class="icon">18、</span>铜陵学院</a>
+            <a href="https://zsw.chzu.edu.cn/" target="_blank" class="link-item"><span class="icon">19、</span>滁州学院</a>
+            <a href="http://www.ahszu.edu.cn/zs/" target="_blank" class="link-item"><span class="icon">20、</span>宿州学院</a>
+            <a href="https://zsb.hfnu.edu.cn/" target="_blank" class="link-item"><span class="icon">21、</span>合肥师范学院</a>
+            <a href="https://zhaoban.bbc.edu.cn/" target="_blank" class="link-item"><span class="icon">22、</span>蚌埠学院</a>
+            <a href="https://zs.czu.edu.cn/" target="_blank" class="link-item"><span class="icon">23、</span>池州学院</a>
+            <a href="https://www.bzuu.edu.cn/zzxx/" target="_blank" class="link-item"><span class="icon">24、</span>亳州学院</a>
+            <a href="https://www.uwh.edu.cn/zsw" target="_blank" class="link-item"><span class="icon">25、</span>芜湖学院</a>
+            <a href="https://www.ahua.edu.cn/zsw/" target="_blank" class="link-item"><span class="icon">26、</span>安徽艺术学院</a>
+            <a href="https://zhaosheng.axhu.edu.cn/" target="_blank" class="link-item"><span class="icon">27、</span>安徽新华学院</a>
+            <a href="https://zsb.slu.edu.cn/" target="_blank" class="link-item"><span class="icon">28、</span>安徽三联学院</a>
+            <a href="https://www.aisu.edu.cn/zsb/" target="_blank" class="link-item"><span class="icon">29、</span>安徽外国语学院</a>
+            <a href="https://zsxx.aiit.edu.cn/" target="_blank" class="link-item"><span class="icon">30、</span>安徽信息工程学院</a>
+            <a href="https://www.hfue.edu.cn/zsw//index.html" target="_blank" class="link-item"><span class="icon">31、</span>合肥经济学院</a>
+            <a href="https://www.cuhf.edu.cn/zsb/" target="_blank" class="link-item"><span class="icon">32、</span>合肥城市学院</a>
+            <a href="https://zs.bctb.edu.cn/" target="_blank" class="link-item"><span class="icon">33、</span>蚌埠工商学院</a>
+            <a href="https://fyut.edu.cn/c/zsw/sy.jhtml" target="_blank" class="link-item"><span class="icon">34、</span>阜阳理工学院</a>
+            <a href="https://www.wjut.edu.cn/zhao-sheng-zhuan-ti/" target="_blank" class="link-item"><span class="icon">35、</span>皖江工学院</a>
+            <a href="https://zsb.hblgxy.edu.cn/" target="_blank" class="link-item"><span class="icon">36、</span>淮北理工学院</a>
+            <a href="https://zs.masu.edu.cn/main.htm" target="_blank" class="link-item"><span class="icon">37、</span>马鞍山学院</a>
+            <a href="https://www.wenda.edu.cn/zs/" target="_blank" class="link-item"><span class="icon">38、</span>安徽文达信息工程学院</a>
+            <a href="https://www.aycc.edu.cn/zhaosheng/" target="_blank" class="link-item"><span class="icon">39、</span>安徽医科大学临床学院</a>
+            <a href="https://zsw.ahyz.edu.cn/" target="_blank" class="link-item"><span class="icon">40、</span>安徽第二医学院</a>
+            <a href="https://www.uta.edu.cn/zsw/" target="_blank" class="link-item"><span class="icon">41、</span>安徽职业技术大学</a>
+            <a href="https://zs.whit.edu.cn/" target="_blank" class="link-item"><span class="icon">42、</span>芜湖职业技术大学</a>
+            <a href="https://www.ahzsks.cn/zyyx/" target="_blank" class="link-item"><span class="icon">🌥️</span>安徽省招生考试院</a>
+            <a href="zsbbm.ahzsks.cn" target="_blank" class="link-item"><span class="icon">🔴</span>专升本报名网址</a>
+            <a href="https://cx.ahzsks.cn/" target="_blank" class="link-item"><span class="icon">🛡️</span>专升本成绩查询</a>
+        </div>
+    </div>
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const linksGrid = document.getElementById('linksGrid');
+        const noResults = document.getElementById('noResults');
+        const linkItems = document.querySelectorAll('.link-item');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            linkItems.forEach(item => {
+                const linkText = item.textContent.toLowerCase();
+                if (linkText.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            if (visibleCount === 0 && searchTerm !== '') {
+                noResults.classList.add('show');
+            } else {
+                noResults.classList.remove('show');
+            }
+        });
+    </script>
+    
+</body>
+</html>

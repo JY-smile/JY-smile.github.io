@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常用链接导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-box::placeholder {
+            color: #999;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 22px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .link-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .link-item .icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .link-item.hidden {
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 18px;
+            display: none;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .link-item {
+                padding: 14px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 常用链接导航</h1>
+        <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索链接名称...">
+        <div class="no-results" id="noResults">没有找到匹配的链接</div>
+        <div class="links-grid" id="linksGrid">
+            <a href="https://www.google.com" target="_blank" class="link-item"><span class="icon">🔍</span>Google 搜索</a>
+            <a href="https://www.github.com" target="_blank" class="link-item"><span class="icon">🐱</span>GitHub</a>
+            <a href="https://www.bilibili.com" target="_blank" class="link-item"><span class="icon">📺</span>哔哩哔哩</a>
+            <a href="https://www.zhihu.com" target="_blank" class="link-item"><span class="icon">💡</span>知乎</a>
+            <a href="https://www.csdn.net" target="_blank" class="link-item"><span class="icon">💻</span>CSDN</a>
+            <a href="https://www.leetcode.cn" target="_blank" class="link-item"><span class="icon">🎯</span>LeetCode 中国</a>
+            <a href="https://juejin.cn" target="_blank" class="link-item"><span class="icon">⛏️</span>掘金</a>
+            <a href="https://chat.openai.com" target="_blank" class="link-item"><span class="icon">🤖</span>ChatGPT</a>
+            <a href="https://www.bing.com" target="_blank" class="link-item"><span class="icon">🔎</span>必应搜索</a>
+            <a href="https://gitee.com" target="_blank" class="link-item"><span class="icon">🐧</span>Gitee</a>
+            <a href="https://weibo.com" target="_blank" class="link-item"><span class="icon">📱</span>微博</a>
+            <a href="https://www.douyin.com" target="_blank" class="link-item"><span class="icon">🎵</span>抖音</a>
+            <a href="https://www.taobao.com" target="_blank" class="link-item"><span class="icon">🛒</span>淘宝</a>
+            <a href="https://www.jd.com" target="_blank" class="link-item"><span class="icon">📦</span>京东</a>
+            <a href="https://www.tmall.com" target="_blank" class="link-item"><span class="icon">🏪</span>天猫</a>
+            <a href="https://www.pinduoduo.com" target="_blank" class="link-item"><span class="icon">🛍️</span>拼多多</a>
+            <a href="https://www.163.com" target="_blank" class="link-item"><span class="icon">📧</span>网易</a>
+            <a href="https://www.sina.com.cn" target="_blank" class="link-item"><span class="icon">📰</span>新浪</a>
+            <a href="https://www.sohu.com" target="_blank" class="link-item"><span class="icon">🌐</span>搜狐</a>
+            <a href="https://www.ifeng.com" target="_blank" class="link-item"><span class="icon">🦅</span>凤凰网</a>
+            <a href="https://www.people.com.cn" target="_blank" class="link-item"><span class="icon">🏛️</span>人民网</a>
+            <a href="https://www.xinhuanet.com" target="_blank" class="link-item"><span class="icon">📡</span>新华网</a>
+            <a href="https://www.cctv.com" target="_blank" class="link-item"><span class="icon">📺</span>央视网</a>
+            <a href="https://www.qq.com" target="_blank" class="link-item"><span class="icon">🐧</span>腾讯网</a>
+            <a href="https://www.iqiyi.com" target="_blank" class="link-item"><span class="icon">🎬</span>爱奇艺</a>
+            <a href="https://v.qq.com" target="_blank" class="link-item"><span class="icon">📽️</span>腾讯视频</a>
+            <a href="https://youku.com" target="_blank" class="link-item"><span class="icon">🎥</span>优酷</a>
+            <a href="https://www.mgtv.com" target="_blank" class="link-item"><span class="icon">📺</span>芒果TV</a>
+            <a href="https://www.douban.com" target="_blank" class="link-item"><span class="icon">📚</span>豆瓣</a>
+            <a href="https://music.163.com" target="_blank" class="link-item"><span class="icon">🎶</span>网易云音乐</a>
+            <a href="https://y.qq.com" target="_blank" class="link-item"><span class="icon">🎼</span>QQ音乐</a>
+            <a href="https://www.kugou.com" target="_blank" class="link-item"><span class="icon">🎤</span>酷狗音乐</a>
+            <a href="https://www.kuwo.cn" target="_blank" class="link-item"><span class="icon">🎵</span>酷我音乐</a>
+            <a href="https://www.zhihuishu.com" target="_blank" class="link-item"><span class="icon">📖</span>智慧树</a>
+            <a href="https://www.icourse163.org" target="_blank" class="link-item"><span class="icon">🎓</span>中国大学MOOC</a>
+            <a href="https://www.xuetangx.com" target="_blank" class="link-item"><span class="icon">📚</span>学堂在线</a>
+            <a href="https://www.stackoverflow.com" target="_blank" class="link-item"><span class="icon">💬</span>Stack Overflow</a>
+            <a href="https://www.runoob.com" target="_blank" class="link-item"><span class="icon">📝</span>菜鸟教程</a>
+            <a href="https://www.w3school.com.cn" target="_blank" class="link-item"><span class="icon">🌐</span>W3School</a>
+            <a href="https://www.jianshu.com" target="_blank" class="link-item"><span class="icon">✍️</span>简书</a>
+            <a href="https://segmentfault.com" target="_blank" class="link-item"><span class="icon">🔧</span>思否</a>
+            <a href="https://www.v2ex.com" target="_blank" class="link-item"><span class="icon">💭</span>V2EX</a>
+            <a href="https://www.oschina.net" target="_blank" class="link-item"><span class="icon">🔨</span>开源中国</a>
+            <a href="https://www.cnblogs.com" target="_blank" class="link-item"><span class="icon">📋</span>博客园</a>
+            <a href="https://cloud.tencent.com" target="_blank" class="link-item"><span class="icon">☁️</span>腾讯云</a>
+            <a href="https://www.aliyun.com" target="_blank" class="link-item"><span class="icon">🌥️</span>阿里云</a>
+            <a href="https://www.baidu.com" target="_blank" class="link-item"><span class="icon">🔴</span>百度</a>
+            <a href="https://www.360.cn" target="_blank" class="link-item"><span class="icon">🛡️</span>360</a>
+            <a href="https://www.weather.com.cn" target="_blank" class="link-item"><span class="icon">⛅</span>中国天气网</a>
+        </div>
+    </div>
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const linksGrid = document.getElementById('linksGrid');
+        const noResults = document.getElementById('noResults');
+        const linkItems = document.querySelectorAll('.link-item');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            linkItems.forEach(item => {
+                const linkText = item.textContent.toLowerCase();
+                if (linkText.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            if (visibleCount === 0 && searchTerm !== '') {
+                noResults.classList.add('show');
+            } else {
+                noResults.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

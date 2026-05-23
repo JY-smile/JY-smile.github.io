@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIGC Universe — 人工智能生成内容全景</title>
+    <meta name="description" content="探索 AIGC、AI Agent、大语言模型与智能体生态的前沿全景">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP + ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <style>
+        /* ===== CSS CUSTOM PROPERTIES ===== */
+        :root {
+            --bg-primary: #050510;
+            --bg-secondary: #0a0a1a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0f0f5;
+            --text-secondary: rgba(240, 240, 245, 0.6);
+            --text-muted: rgba(240, 240, 245, 0.35);
+            --accent-cyan: #00f0ff;
+            --accent-purple: #a855f7;
+            --accent-pink: #f472b6;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --gradient-main: linear-gradient(135deg, #00f0ff, #a855f7, #f472b6);
+            --gradient-warm: linear-gradient(135deg, #f59e0b, #f472b6);
+            --gradient-cool: linear-gradient(135deg, #00f0ff, #3b82f6);
+            --gradient-nature: linear-gradient(135deg, #10b981, #00f0ff);
+            --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            --font-body: 'Inter', 'Noto Sans SC', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+        }
+
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ::selection {
+            background: rgba(168, 85, 247, 0.4);
+            color: #fff;
+        }
+
+        /* ===== LOADER ===== */
+        .loader {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-ring {
+            width: 60px;
+            height: 60px;
+            border: 2px solid transparent;
+            border-top-color: var(--accent-cyan);
+            border-right-color: var(--accent-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-text {
+            margin-top: 24px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== THREE.JS CANVAS ===== */
+        #three-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+            mix-blend-mode: screen;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid rgba(0, 240, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, border-color 0.3s;
+        }
+
+        .cursor-dot.hover {
+            width: 14px;
+            height: 14px;
+            background: var(--accent-purple);
+        }
+
+        .cursor-ring.hover {
+            width: 50px;
+            height: 50px;
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        /* ===== NAVIGATION ===== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s, backdrop-filter 0.4s;
+        }
+
+        .nav.scrolled {
+            background: rgba(5, 5, 16, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-main);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 8px 20px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 100px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-cta:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 40px 80px;
+            overflow: hidden;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px 6px 8px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(48px, 8vw, 120px);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -3px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title .gradient-text {
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title .line-inner {
+            display: block;
+            transform: translateY(110%);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-secondary);
+            max-width: 640px;
+            line-height: 1.7;
+            margin-bottom: 48px;
+            font-weight: 300;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--gradient-main);
+            border: none;
+            border-radius: 100px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 100px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--accent-cyan), transparent);
+            animation: scroll-pulse 2s ease infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        @keyframes scroll-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border-glass);
+            margin: 0 40px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 40px;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 4vw, 52px);
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* ===== SECTION COMMON ===== */
+        section {
+            position: relative;
+            z-index: 2;
+            padding: 120px 40px;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 80px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 100px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--accent-cyan);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== TIMELINE — EVOLUTION ===== */
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple), var(--accent-pink), transparent);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding: 32px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .timeline-content:hover {
+            border-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.05);
+        }
+
+        .timeline-year {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--accent-cyan);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .timeline-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .timeline-spacer {
+            flex: 1;
+        }
+
+        /* ===== TECH STACK CARDS ===== */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tech-card {
+            position: relative;
+            padding: 40px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+            transition: transform 0.4s, border-color 0.4s, box-shadow 0.4s;
+            cursor: default;
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.4s;
+            border-radius: inherit;
+        }
+
+        .tech-card.cyan::before { background: radial-gradient(ellipse at 30% 0%, rgba(0,240,255,0.08), transparent 60%); }
+        .tech-card.purple::before { background: radial-gradient(ellipse at 30% 0%, rgba(168,85,247,0.08), transparent 60%); }
+        .tech-card.pink::before { background: radial-gradient(ellipse at 30% 0%, rgba(244,114,182,0.08), transparent 60%); }
+        .tech-card.green::before { background: radial-gradient(ellipse at 30% 0%, rgba(16,185,129,0.08), transparent 60%); }
+        .tech-card.orange::before { background: radial-gradient(ellipse at 30% 0%, rgba(245,158,11,0.08), transparent 60%); }
+        .tech-card.blue::before { background: radial-gradient(ellipse at 30% 0%, rgba(59,130,246,0.08), transparent 60%); }
+
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .tech-card:hover::before {
+            opacity: 1;
+        }
+
+        .tech-card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 24px;
+        }
+
+        .tech-card.cyan .tech-card-icon { background: rgba(0,240,255,0.1); }
+        .tech-card.purple .tech-card-icon { background: rgba(168,85,247,0.1); }
+        .tech-card.pink .tech-card-icon { background: rgba(244,114,182,0.1); }
+        .tech-card.green .tech-card-icon { background: rgba(16,185,129,0.1); }
+        .tech-card.orange .tech-card-icon { background: rgba(245,158,11,0.1); }
+        .tech-card.blue .tech-card-icon { background: rgba(59,130,246,0.1); }
+
+        .tech-card-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tech-card-subtitle {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .tech-card-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin-bottom: 20px;
+        }
+
+        .tech-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-tag {
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 100px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* ===== PARADIGM SHIFT — SPLIT SECTION ===== */
+        .paradigm-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+        }
+
+        .paradigm-card {
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .paradigm-card.old {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+        }
+
+        .paradigm-card.new {
+            background: linear-gradient(135deg, rgba(0,240,255,0.05), rgba(168,85,247,0.05));
+            border: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        .paradigm-label {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .paradigm-card.old .paradigm-label { color: var(--text-muted); }
+        .paradigm-card.new .paradigm-label { color: var(--accent-cyan); }
+
+        .paradigm-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .paradigm-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .paradigm-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .paradigm-list .icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .paradigm-card.old .icon { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+        .paradigm-card.new .icon { background: rgba(0, 240, 255, 0.1); color: var(--accent-cyan); }
+
+        /* ===== ECOSYSTEM — ORBIT ===== */
+        .ecosystem {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .eco-center {
+            width: 140px;
+            height: 140px;
+            background: var(--gradient-main);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            z-index: 3;
+            box-shadow: 0 0 60px rgba(0, 240, 255, 0.3), 0 0 120px rgba(168, 85, 247, 0.15);
+            position: relative;
+        }
+
+        .eco-orbit {
+            position: absolute;
+            border: 1px solid var(--border-glass);
+            border-radius: 50%;
+            animation: orbit-spin linear infinite;
+        }
+
+        .eco-orbit:nth-child(2) { width: 300px; height: 300px; animation-duration: 20s; }
+        .eco-orbit:nth-child(3) { width: 440px; height: 440px; animation-duration: 30s; animation-direction: reverse; }
+        .eco-orbit:nth-child(4) { width: 580px; height: 580px; animation-duration: 40s; }
+
+        @keyframes orbit-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .eco-node {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 2;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: default;
+        }
+
+        .eco-node:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .eco-node-tooltip {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 14px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .eco-node:hover .eco-node-tooltip {
+            opacity: 1;
+        }
+
+        /* Orbit 1 nodes */
+        .eco-orbit:nth-child(2) .eco-node:nth-child(1) { top: -32px; left: calc(50% - 32px); }
+        .eco-orbit:nth-child(2) .eco-node:nth-child(2) { bottom: -32px; left: calc(50% - 32px); }
+        .eco-orbit:nth-child(2) .eco-node:nth-child(3) { left: -32px; top: calc(50% - 32px); }
+
+        /* Orbit 2 nodes */
+        .eco-orbit:nth-child(3) .eco-node:nth-child(1) { top: -32px; left: calc(50% - 32px); }
+        .eco-orbit:nth-child(3) .eco-node:nth-child(2) { bottom: -32px; left: calc(50% - 32px); }
+        .eco-orbit:nth-child(3) .eco-node:nth-child(3) { right: -32px; top: calc(50% - 32px); }
+        .eco-orbit:nth-child(3) .eco-node:nth-child(4) { left: -32px; top: calc(50% - 32px); }
+
+        /* Orbit 3 nodes */
+        .eco-orbit:nth-child(4) .eco-node:nth-child(1) { top: -32px; left: calc(50% - 32px); }
+        .eco-orbit:nth-child(4) .eco-node:nth-child(2) { bottom: -32px; left: calc(50% - 32px); }
+        .eco-orbit:nth-child(4) .eco-node:nth-child(3) { right: -32px; top: calc(50% - 32px); }
+        .eco-orbit:nth-child(4) .eco-node:nth-child(4) { left: -32px; top: calc(50% - 32px); }
+        .eco-orbit:nth-child(4) .eco-node:nth-child(5) { top: 15%; right: 10%; }
+
+        /* ===== AGENT STACK — LAYERS ===== */
+        .agent-stack {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .agent-layer {
+            padding: 32px 40px;
+            border-radius: var(--radius-lg);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .agent-layer:hover {
+            transform: translateX(8px);
+        }
+
+        .agent-layer.layer-app {
+            background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(244,114,182,0.06));
+            border: 1px solid rgba(168, 85, 247, 0.15);
+        }
+
+        .agent-layer.layer-framework {
+            background: linear-gradient(135deg, rgba(0,240,255,0.08), rgba(59,130,246,0.06));
+            border: 1px solid rgba(0, 240, 255, 0.12);
+        }
+
+        .agent-layer.layer-model {
+            background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(244,114,182,0.06));
+            border: 1px solid rgba(245, 158, 11, 0.12);
+        }
+
+        .agent-layer.layer-infra {
+            background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(0,240,255,0.06));
+            border: 1px solid rgba(16, 185, 129, 0.12);
+        }
+
+        .agent-layer-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .agent-layer-num {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .agent-layer-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .agent-layer-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .agent-layer-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .agent-example {
+            padding: 4px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 100px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+        }
+
+        /* ===== OPENCLAW SPOTLIGHT ===== */
+        .claw-section {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .claw-hero-card {
+            padding: 64px;
+            background: linear-gradient(135deg, rgba(0,240,255,0.06), rgba(168,85,247,0.06), rgba(244,114,182,0.04));
+            border: 1px solid rgba(0, 240, 255, 0.12);
+            border-radius: var(--radius-xl);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .claw-hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0,240,255,0.06), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .claw-label {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--accent-cyan);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .claw-name {
+            font-family: var(--font-display);
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .claw-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 600px;
+            margin-bottom: 32px;
+        }
+
+        .claw-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .claw-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .claw-feature-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: rgba(0, 240, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .claw-feature-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .claw-feature-text strong {
+            color: var(--text-primary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* ===== CODE WINDOW ===== */
+        .code-window {
+            background: #0d0d1a;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            max-width: 700px;
+            margin: 60px auto 0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .code-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #ff5f57; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #28ca41; }
+
+        .code-title {
+            margin-left: 8px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .code-body {
+            padding: 24px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .code-body .comment { color: #555580; }
+        .code-body .keyword { color: var(--accent-purple); }
+        .code-body .string { color: var(--accent-green); }
+        .code-body .func { color: var(--accent-cyan); }
+        .code-body .var { color: var(--accent-pink); }
+        .code-body .type { color: var(--accent-orange); }
+
+        /* ===== FUTURE VISION ===== */
+        .vision-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .vision-card {
+            padding: 40px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s, border-color 0.4s;
+        }
+
+        .vision-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .vision-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 0 var(--radius-lg) 0 100%;
+            opacity: 0.5;
+        }
+
+        .vision-card:nth-child(1)::after { background: radial-gradient(circle at 100% 0%, rgba(0,240,255,0.1), transparent); }
+        .vision-card:nth-child(2)::after { background: radial-gradient(circle at 100% 0%, rgba(168,85,247,0.1), transparent); }
+        .vision-card:nth-child(3)::after { background: radial-gradient(circle at 100% 0%, rgba(244,114,182,0.1), transparent); }
+
+        .vision-year {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .vision-title {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .vision-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ===== MARQUEE ===== */
+        .marquee-section {
+            padding: 40px 0;
+            overflow: hidden;
+            border-top: 1px solid var(--border-glass);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 60px;
+            animation: marquee-scroll 30s linear infinite;
+            width: max-content;
+        }
+
+        .marquee-item {
+            font-family: var(--font-display);
+            font-size: clamp(20px, 3vw, 32px);
+            font-weight: 300;
+            color: var(--text-muted);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .marquee-item .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            text-align: center;
+            padding: 160px 40px;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .cta-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--border-glass);
+            padding: 60px 40px 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .footer-col-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .footer-col a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 4px 0;
+            transition: color 0.3s;
+        }
+
+        .footer-col a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-glass);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-bottom a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-bottom a:hover { color: var(--accent-cyan); }
+
+        /* ===== NOISE OVERLAY ===== */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9990;
+            pointer-events: none;
+            opacity: 0.015;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 512px;
+        }
+
+        /* ===== GLOW DIVIDERS ===== */
+        .glow-divider {
+            height: 1px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), var(--accent-pink), transparent);
+            opacity: 0.3;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .paradigm-section { grid-template-columns: 1fr; }
+            .vision-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            section { padding: 80px 20px; }
+            .nav { padding: 12px 20px; }
+            .nav-links { display: none; }
+            .hero { padding: 100px 20px 60px; }
+            .stats-bar { margin: 0 20px; grid-template-columns: 1fr 1fr; }
+            .stat-item { padding: 24px; }
+            .timeline::before { left: 20px; }
+            .timeline-item { flex-direction: column !important; gap: 16px; padding-left: 48px; }
+            .timeline-dot { position: absolute; left: 12px; }
+            .timeline-spacer { display: none; }
+            .tech-grid { grid-template-columns: 1fr; }
+            .claw-hero-card { padding: 32px; }
+            .ecosystem { height: 400px; transform: scale(0.65); }
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            .cursor-dot, .cursor-ring { display: none; }
+            .hero-title { letter-spacing: -1px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-bar { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">Initializing</div>
+</div>
+
+<!-- Noise Overlay -->
+<div class="noise-overlay"></div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Three.js Canvas -->
+<canvas id="three-canvas"></canvas>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+    <div class="nav-logo">硅基改变碳基</div>
+    <ul class="nav-links">
+        <li><a href="#evolution">演化</a></li>
+        <li><a href="#tech">技术栈</a></li>
+        <li><a href="#paradigm">范式</a></li>
+        <li><a href="#agents">智能体</a></li>
+        <li><a href="#claw">OpenClaw</a></li>
+        <li><a href="#vision">未来</a></li>
+    </ul>
+    <a href="#claw" class="nav-cta">探索生态 →</a>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="hero">
+    <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span>AIGC 2024—2026 · 前沿全景</span>
+    </div>
+
+    <h1 class="hero-title">
+        <span class="line"><span class="line-inner">人工智能</span></span>
+        <span class="line"><span class="line-inner"><span class="gradient-text">正在重写一切</span></span></span>
+    </h1>
+
+    <p class="hero-subtitle">
+        从 GPT 到多模态 Agent，从代码补全到自主工作流。<br>
+        这是一场关于创造力、生产力与智能体的技术革命。
+    </p>
+
+    <div class="hero-actions">
+        <a href="#tech" class="btn-primary">
+            开始探索
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+        <a href="#claw" class="btn-secondary">
+            了解 OpenClaw
+        </a>
+    </div>
+
+    <div class="hero-scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+    </div>
+</section>
+
+<!-- ==================== STATS ==================== -->
+<div class="stats-bar" id="stats">
+    <div class="stat-item">
+        <div class="stat-number" data-count="1750">0</div>
+        <div class="stat-label">全球 AI 模型数量 (B+)</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" data-count="89">0</div>
+        <div class="stat-label">财富500强已部署 AI</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" data-count="4200">0</div>
+        <div class="stat-label">AI 初创公司 (亿美元融资)</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" data-count="340">0</div>
+        <div class="stat-label">Agent 框架 Star 数 (K)</div>
+    </div>
+</div>
+
+<!-- ==================== MARQUEE ==================== -->
+<div class="marquee-section">
+    <div class="marquee-track">
+        <span class="marquee-item"><span class="dot"></span>Large Language Model</span>
+        <span class="marquee-item"><span class="dot"></span>多模态理解</span>
+        <span class="marquee-item"><span class="dot"></span>AI Agent</span>
+        <span class="marquee-item"><span class="dot"></span>RAG 检索增强生成</span>
+        <span class="marquee-item"><span class="dot"></span>Text-to-Image</span>
+        <span class="marquee-item"><span class="dot"></span>自主工作流</span>
+        <span class="marquee-item"><span class="dot"></span>Function Calling</span>
+        <span class="marquee-item"><span class="dot"></span>向量数据库</span>
+        <span class="marquee-item"><span class="dot"></span>Code Generation</span>
+        <span class="marquee-item"><span class="dot"></span>模型微调</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="marquee-item"><span class="dot"></span>Large Language Model</span>
+        <span class="marquee-item"><span class="dot"></span>多模态理解</span>
+        <span class="marquee-item"><span class="dot"></span>AI Agent</span>
+        <span class="marquee-item"><span class="dot"></span>RAG 检索增强生成</span>
+        <span class="marquee-item"><span class="dot"></span>Text-to-Image</span>
+        <span class="marquee-item"><span class="dot"></span>自主工作流</span>
+        <span class="marquee-item"><span class="dot"></span>Function Calling</span>
+        <span class="marquee-item"><span class="dot"></span>向量数据库</span>
+        <span class="marquee-item"><span class="dot"></span>Code Generation</span>
+        <span class="marquee-item"><span class="dot"></span>模型微调</span>
+    </div>
+</div>
+
+<!-- ==================== EVOLUTION TIMELINE ==================== -->
+<section id="evolution">
+    <div class="section-header">
+        <div class="section-tag">Timeline</div>
+        <h2 class="section-title">AI 的<span class="gradient-text">进化之路</span></h2>
+        <p class="section-desc">从规则系统到自主智能体，每一次跃迁都在重新定义可能性。</p>
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="timeline-year">2017</div>
+                <div class="timeline-title">Transformer 架构诞生</div>
+                <div class="timeline-desc">Google 发表 "Attention Is All You Need"，奠定了现代大模型的基石。自注意力机制取代 RNN/CNN，开启了 NLP 新纪元。</div>
+            </div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-spacer"></div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="timeline-year">2018 — 2020</div>
+                <div class="timeline-title">预训练模型时代</div>
+                <div class="timeline-desc">BERT、GPT-1/2/3 陆续发布。"预训练 + 微调"成为主流范式，GPT-3 展示了 few-shot learning 的惊人能力。</div>
+            </div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-spacer"></div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="timeline-year">2022</div>
+                <div class="timeline-title">AIGC 元年</div>
+                <div class="timeline-desc">ChatGPT 横空出世，Stable Diffusion 引爆 AI 绘画。LLM 从实验室走向大众，"生成式 AI" 成为最热关键词。</div>
+            </div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-spacer"></div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="timeline-year">2023 — 2024</div>
+                <div class="timeline-title">多模态与 Agent 崛起</div>
+                <div class="timeline-desc">GPT-4V、Claude 3、Gemini 实现文本/图像/音频统一理解。AutoGPT、LangChain 点燃 Agent 开发热潮，AI 开始"做事"而非仅"说话"。</div>
+            </div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-spacer"></div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="timeline-year">2025 — 2026</div>
+                <div class="timeline-title">自主智能体生态</div>
+                <div class="timeline-desc">OpenClaw 等框架将 Agent 带入个人设备。AI 从工具进化为"数字分身"——理解上下文、操作工具、持续学习、自主执行。</div>
+            </div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-spacer"></div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ==================== TECH STACK ==================== -->
+<section id="tech">
+    <div class="section-header">
+        <div class="section-tag">Tech Stack</div>
+        <h2 class="section-title">AIGC <span class="gradient-text">技术全景</span></h2>
+        <p class="section-desc">从底层模型到上层应用，六大核心技术正在重塑数字世界。</p>
+    </div>
+
+    <div class="tech-grid">
+        <div class="tech-card cyan">
+            <div class="tech-card-icon">🧠</div>
+            <div class="tech-card-subtitle">Foundation Models</div>
+            <div class="tech-card-title">大语言模型</div>
+            <div class="tech-card-desc">GPT-4o、Claude 3.5、Gemini 2.0、DeepSeek-V3、Qwen-2.5 — 万亿参数级模型实现接近人类的理解与推理能力。</div>
+            <div class="tech-card-tags">
+                <span class="tech-tag">Transformer</span>
+                <span class="tech-tag">MoE</span>
+                <span class="tech-tag">RLHF</span>
+                <span class="tech-tag">DPO</span>
+            </div>
+        </div>
+
+        <div class="tech-card purple">
+            <div class="tech-card-icon">🎨</div>
+            <div class="tech-card-subtitle">Generative Media</div>
+            <div class="tech-card-title">多模态生成</div>
+            <div class="tech-card-desc">Midjourney V6、Sora、Suno、Kling — 文字生成图像/视频/音乐/3D，创意表达的门槛降至零。</div>
+            <div class="tech-card-tags">
+                <span class="tech-tag">Diffusion</span>
+                <span class="tech-tag">DiT</span>
+                <span class="tech-tag">Flow Matching</span>
+                <span class="tech-tag">VAE</span>
+            </div>
+        </div>
+
+        <div class="tech-card pink">
+            <div class="tech-card-icon">🤖</div>
+            <div class="tech-card-subtitle">Autonomous Agent</div>
+            <div class="tech-card-title">AI 智能体</div>
+            <div class="tech-card-desc">感知 → 推理 → 规划 → 执行的闭环。Agent 能调用工具、访问 API、操作文件系统，完成复杂多步任务。</div>
+            <div class="tech-card-tags">
+                <span class="tech-tag">ReAct</span>
+                <span class="tech-tag">Tool Use</span>
+                <span class="tech-tag">Planning</span>
+                <span class="tech-tag">Memory</span>
+            </div>
+        </div>
+
+        <div class="tech-card green">
+            <div class="tech-card-icon">🔍</div>
+            <div class="tech-card-subtitle">Knowledge Retrieval</div>
+            <div class="tech-card-title">RAG & 知识增强</div>
+            <div class="tech-card-desc">检索增强生成让模型接入实时知识库。向量数据库 + 语义搜索 = 每次回答都有据可查。</div>
+            <div class="tech-card-tags">
+                <span class="tech-tag">Embedding</span>
+                <span class="tech-tag">Vector DB</span>
+                <span class="tech-tag">Chunking</span>
+                <span class="tech-tag">Rerank</span>
+            </div>
+        </div>
+
+        <div class="tech-card orange">
+            <div class="tech-card-icon">⚡</div>
+            <div class="tech-card-subtitle">Inference Optimization</div>
+            <div class="tech-card-title">推理加速</div>
+            <div class="tech-card-desc">量化、蒸馏、投机解码、KV-Cache 优化 — 让大模型在消费级硬件上流畅运行，边缘推理成为现实。</div>
+            <div class="tech-card-tags">
+                <span class="tech-tag">GGUF</span>
+                <span class="tech-tag">GPTQ</span>
+                <span class="tech-tag">vLLM</span>
+                <span class="tech-tag">ONNX</span>
+            </div>
+        </div>
+
+        <div class="tech-card blue">
+            <div class="tech-card-icon">🔗</div>
+            <div class="tech-card-subtitle">AI Infrastructure</div>
+            <div class="tech-card-title">AI 基础设施</div>
+            <div class="tech-card-desc">MCP 协议、A2A 通信、Function Calling、Tool Server — 标准化接口让 AI 生态互联互通。</div>
+            <div class="tech-card-tags">
+                <span class="tech-tag">MCP</span>
+                <span class="tech-tag">A2A</span>
+                <span class="tech-tag">API Gateway</span>
+                <span class="tech-tag">Orchestration</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ==================== PARADIGM SHIFT ==================== -->
+<section id="paradigm">
+    <div class="section-header">
+        <div class="section-tag">Paradigm Shift</div>
+        <h2 class="section-title">范式<span class="gradient-text">转移</span></h2>
+        <p class="section-desc">从"人操作软件"到"AI 操作一切"，交互范式正在被重写。</p>
+    </div>
+
+    <div class="paradigm-section">
+        <div class="paradigm-card old">
+            <div class="paradigm-label">传统范式</div>
+            <div class="paradigm-title">人 → 界面 → 工具</div>
+            <ul class="paradigm-list">
+                <li><span class="icon">✕</span> 用户学习每个 App 的操作逻辑</li>
+                <li><span class="icon">✕</span> 信息分散在不同平台和工具中</li>
+                <li><span class="icon">✕</span> 重复性工作消耗大量时间</li>
+                <li><span class="icon">✕</span> 软件能力 = 开发者预设的功能</li>
+                <li><span class="icon">✕</span> 个性化需要手动配置</li>
+            </ul>
+        </div>
+        <div class="paradigm-card new">
+            <div class="paradigm-label">AI Native 范式</div>
+            <div class="paradigm-title">人 → Agent → 一切</div>
+            <ul class="paradigm-list">
+                <li><span class="icon">✓</span> 用自然语言描述意图，AI 自动执行</li>
+                <li><span class="icon">✓</span> Agent 跨工具编排，打破数据孤岛</li>
+                <li><span class="icon">✓</span> 自主工作流处理复杂任务链</li>
+                <li><span class="icon">✓</span> 能力 = 模型 + 工具的无限组合</li>
+                <li><span class="icon">✓</span> AI 从上下文学习用户偏好</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ==================== AGENT STACK ==================== -->
+<section id="agents">
+    <div class="section-header">
+        <div class="section-tag">Agent Architecture</div>
+        <h2 class="section-title">智能体<span class="gradient-text">技术栈</span></h2>
+        <p class="section-desc">一个完整 AI Agent 系统的四层架构，从基础设施到用户应用。</p>
+    </div>
+
+    <div class="agent-stack">
+        <div class="agent-layer layer-app">
+            <div class="agent-layer-header">
+                <span class="agent-layer-num">L04</span>
+                <span class="agent-layer-title">🎯 应用层 · Application</span>
+            </div>
+            <div class="agent-layer-desc">面向用户的具体 Agent 应用：个人助理、代码助手、内容创作、数据分析、自动化工作流。</div>
+            <div class="agent-layer-examples">
+                <span class="agent-example">OpenClaw</span>
+                <span class="agent-example">Cursor</span>
+                <span class="agent-example">Devin</span>
+                <span class="agent-example">Claude Artifacts</span>
+                <span class="agent-example">ChatGPT Plugins</span>
+            </div>
+        </div>
+
+        <div class="agent-layer layer-framework">
+            <div class="agent-layer-header">
+                <span class="agent-layer-num">L03</span>
+                <span class="agent-layer-title">⚙️ 编排层 · Orchestration</span>
+            </div>
+            <div class="agent-layer-desc">Agent 框架负责记忆管理、工具调度、多轮推理、错误恢复。这是 Agent 能"做事"的核心引擎。</div>
+            <div class="agent-layer-examples">
+                <span class="agent-example">LangChain</span>
+                <span class="agent-example">CrewAI</span>
+                <span class="agent-example">AutoGen</span>
+                <span class="agent-example">Semantic Kernel</span>
+                <span class="agent-example">LlamaIndex</span>
+            </div>
+        </div>
+
+        <div class="agent-layer layer-model">
+            <div class="agent-layer-header">
+                <span class="agent-layer-num">L02</span>
+                <span class="agent-layer-title">🧠 模型层 · Intelligence</span>
+            </div>
+            <div class="agent-layer-desc">提供推理、规划、理解能力的大语言模型。支持 Function Calling、结构化输出、多模态输入。</div>
+            <div class="agent-layer-examples">
+                <span class="agent-example">GPT-4o</span>
+                <span class="agent-example">Claude 3.5</span>
+                <span class="agent-example">Gemini</span>
+                <span class="agent-example">DeepSeek</span>
+                <span class="agent-example">Qwen</span>
+                <span class="agent-example">Llama 3</span>
+            </div>
+        </div>
+
+        <div class="agent-layer layer-infra">
+            <div class="agent-layer-header">
+                <span class="agent-layer-num">L01</span>
+                <span class="agent-layer-title">🔌 协议层 · Protocol</span>
+            </div>
+            <div class="agent-layer-desc">标准化的通信与工具接口协议。MCP 让 AI 连接任何数据源，A2A 让 Agent 之间互相协作。</div>
+            <div class="agent-layer-examples">
+                <span class="agent-example">MCP</span>
+                <span class="agent-example">A2A</span>
+                <span class="agent-example">OpenAPI</span>
+                <span class="agent-example">JSON-RPC</span>
+                <span class="agent-example">WebSocket</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ==================== OPENCLAW SPOTLIGHT ==================== -->
+<section id="claw">
+    <div class="section-header">
+        <div class="section-tag">Spotlight</div>
+        <h2 class="section-title">OpenClaw · <span class="gradient-text">你的 AI 中枢</span></h2>
+        <p class="section-desc">把大模型装进你的设备，让 Agent 成为你真正的数字伙伴。</p>
+    </div>
+
+    <div class="claw-section">
+        <div class="claw-hero-card">
+            <div class="claw-label">Open Source · AI Agent Runtime</div>
+            <div class="claw-name">OpenClaw</div>
+            <div class="claw-desc">
+                运行在你自己的机器上的 AI Agent 平台。连接 Telegram、Discord、WhatsApp、Signal 等消息渠道，
+                集成文件系统、浏览器、Shell、摄像头等工具能力，让 AI 真正成为你的个人操作系统。
+            </div>
+            <div class="claw-features">
+                <div class="claw-feature">
+                    <div class="claw-feature-icon">💬</div>
+                    <div class="claw-feature-text">
+                        <strong>多渠道触达</strong>
+                        Telegram / Discord / WhatsApp / Signal / iMessage / Slack
+                    </div>
+                </div>
+                <div class="claw-feature">
+                    <div class="claw-feature-icon">🛠️</div>
+                    <div class="claw-feature-text">
+                        <strong>工具生态</strong>
+                        浏览器控制 / Shell 执行 / 文件系统 / 设备互联
+                    </div>
+                </div>
+                <div class="claw-feature">
+                    <div class="claw-feature-icon">🧠</div>
+                    <div class="claw-feature-text">
+                        <strong>持久记忆</strong>
+                        跨会话记忆 / 语义搜索 / 知识图谱 / 上下文管理
+                    </div>
+                </div>
+                <div class="claw-feature">
+                    <div class="claw-feature-icon">⏰</div>
+                    <div class="claw-feature-text">
+                        <strong>自主调度</strong>
+                        Cron 任务 / 心跳检查 / 主动提醒 / 后台工作流
+                    </div>
+                </div>
+                <div class="claw-feature">
+                    <div class="claw-feature-icon">🔒</div>
+                    <div class="claw-feature-text">
+                        <strong>隐私优先</strong>
+                        本地运行 / 数据不出设备 / 完全掌控
+                    </div>
+                </div>
+                <div class="claw-feature">
+                    <div class="claw-feature-icon">🧩</div>
+                    <div class="claw-feature-text">
+                        <strong>技能市场</strong>
+                        ClawHub / 可扩展技能 / 社区驱动
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Window -->
+        <div class="code-window">
+            <div class="code-header">
+                <span class="code-dot red"></span>
+                <span class="code-dot yellow"></span>
+                <span class="code-dot green"></span>
+                <span class="code-title">terminal — openclaw</span>
+            </div>
+            <div class="code-body">
+                <span class="comment"># 安装 OpenClaw</span><br>
+                <span class="keyword">npm</span> install -g <span class="string">openclaw</span><br>
+                <br>
+                <span class="comment"># 初始化配置</span><br>
+                <span class="keyword">openclaw</span> <span class="func">init</span><br>
+                <br>
+                <span class="comment"># 启动 Gateway</span><br>
+                <span class="keyword">openclaw</span> <span class="func">gateway</span> <span class="var">start</span><br>
+                <br>
+                <span class="comment"># 连接你的第一个频道</span><br>
+                <span class="keyword">openclaw</span> <span class="func">connect</span> <span class="type">telegram</span><br>
+                <br>
+                <span class="comment"># Agent 已上线 ✓</span><br>
+                <span class="var">→</span> <span class="string">你的 AI 助手现在 24/7 在线</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ==================== FUTURE VISION ==================== -->
+<section id="vision">
+    <div class="section-header">
+        <div class="section-tag">Future</div>
+        <h2 class="section-title">未来<span class="gradient-text">已来</span></h2>
+        <p class="section-desc">2025—2030，AI 将如何继续改变我们的世界？</p>
+    </div>
+
+    <div class="vision-grid">
+        <div class="vision-card">
+            <div class="vision-year">2025 — 2026</div>
+            <div class="vision-title">Agent 操作系统化</div>
+            <div class="vision-desc">AI Agent 将成为 OS 的原生组件。每个设备都有一个"always-on"的智能体，管理通知、文件、日程、通信。像 OpenClaw 这样的平台将从工具进化为基础设施。</div>
+        </div>
+        <div class="vision-card">
+            <div class="vision-year">2026 — 2028</div>
+            <div class="vision-title">多 Agent 协作网络</div>
+            <div class="vision-desc">Agent 不再孤立运行。通过 A2A 协议，专业 Agent 互相协作——你的编程 Agent 调用设计 Agent，设计 Agent 调用市场调研 Agent，形成自治的数字团队。</div>
+        </div>
+        <div class="vision-card">
+            <div class="vision-year">2028 — 2030</div>
+            <div class="vision-title">AGI 前夜</div>
+            <div class="vision-desc">推理能力、长期记忆、自主学习的持续突破。AI 从"执行指令"进化为"理解目标"。人类与 AI 的边界重新定义——不是替代，而是共生。</div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="cta-section">
+    <h2 class="cta-title">
+        准备好进入<br><span class="gradient-text">AIGC 时代</span>了吗？
+    </h2>
+    <p class="cta-desc">
+        不管你是开发者、创作者还是探索者，现在就是最好的入场时机。
+    </p>
+    <div class="hero-actions">
+        <a href="https://github.com/openclaw/openclaw" target="_blank" class="btn-primary">
+            ⭐ Star on GitHub
+        </a>
+        <a href="https://docs.openclaw.ai" target="_blank" class="btn-secondary">
+            📖 阅读文档
+        </a>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand">AIGC Universe</div>
+            <p class="footer-brand-desc">探索人工智能生成内容的前沿全景。<br>Built with ❤️ for the AI-native future.</p>
+        </div>
+        <div class="footer-col">
+            <div class="footer-col-title">技术</div>
+            <a href="#">大语言模型</a>
+            <a href="#">多模态生成</a>
+            <a href="#">AI Agent</a>
+            <a href="#">RAG 检索增强</a>
+        </div>
+        <div class="footer-col">
+            <div class="footer-col-title">生态</div>
+            <a href="https://github.com/openclaw/openclaw" target="_blank">OpenClaw</a>
+            <a href="#">LangChain</a>
+            <a href="#">HuggingFace</a>
+            <a href="#">MCP Protocol</a>
+        </div>
+        <div class="footer-col">
+            <div class="footer-col-title">资源</div>
+            <a href="https://docs.openclaw.ai" target="_blank">文档</a>
+            <a href="https://clawhub.com" target="_blank">ClawHub</a>
+            <a href="https://discord.com/invite/clawd" target="_blank">社区</a>
+            <a href="#">GitHub</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2026 AIGC Universe. Open Source.</span>
+        <span>Powered by <a href="https://github.com/openclaw/openclaw" target="_blank">OpenClaw</a></span>
+    </div>
+</footer>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ===== LOADER =====
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+        initAnimations();
+    }, 1200);
+});
+
+// ===== SMOOTH SCROLL =====
+const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    direction: 'vertical',
+    gestureDirection: 'vertical',
+    smooth: true,
+    smoothTouch: false,
+});
+
+function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+}
+requestAnimationFrame(raf);
+
+// ===== CUSTOM CURSOR =====
+const cursorDot = document.getElementById('cursorDot');
+const cursorRing = document.getElementById('cursorRing');
+let mouseX = 0, mouseY = 0;
+let dotX = 0, dotY = 0;
+let ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+function animateCursor() {
+    dotX += (mouseX - dotX) * 0.2;
+    dotY += (mouseY - dotY) * 0.2;
+    ringX += (mouseX - ringX) * 0.1;
+    ringY += (mouseY - ringY) * 0.1;
+
+    cursorDot.style.left = dotX + 'px';
+    cursorDot.style.top = dotY + 'px';
+    cursorRing.style.left = ringX + 'px';
+    cursorRing.style.top = ringY + 'px';
+
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// Hover effect on interactive elements
+document.querySelectorAll('a, button, .tech-card, .vision-card, .eco-node, .btn-primary, .btn-secondary, .nav-cta').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        cursorDot.classList.add('hover');
+        cursorRing.classList.add('hover');
+    });
+    el.addEventListener('mouseleave', () => {
+        cursorDot.classList.remove('hover');
+        cursorRing.classList.remove('hover');
+    });
+});
+
+// ===== NAV SCROLL =====
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('nav');
+    if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+    } else {
+        nav.classList.remove('scrolled');
+    }
+});
+
+// ===== THREE.JS PARTICLES =====
+(function initThree() {
+    const canvas = document.getElementById('three-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 30;
+
+    // Particles
+    const particleCount = 1500;
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const sizes = new Float32Array(particleCount);
+
+    const colorPalette = [
+        new THREE.Color('#00f0ff'),
+        new THREE.Color('#a855f7'),
+        new THREE.Color('#f472b6'),
+        new THREE.Color('#3b82f6'),
+    ];
+
+    for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 80;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 80;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+
+        const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+        colors[i * 3] = color.r;
+        colors[i * 3 + 1] = color.g;
+        colors[i * 3 + 2] = color.b;
+
+        sizes[i] = Math.random() * 2 + 0.5;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+    const material = new THREE.PointsMaterial({
+        size: 0.15,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true,
+    });
+
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    // Connection lines
+    const lineMaterial = new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0.03,
+        blending: THREE.AdditiveBlending,
+    });
+
+    // Mouse interaction
+    let mouseVec = new THREE.Vector2();
+    document.addEventListener('mousemove', (e) => {
+        mouseVec.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseVec.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // Scroll-based camera
+    let scrollY = 0;
+    window.addEventListener('scroll', () => {
+        scrollY = window.scrollY;
+    });
+
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+
+        const time = Date.now() * 0.001;
+
+        particles.rotation.x = time * 0.03 + scrollY * 0.0001;
+        particles.rotation.y = time * 0.02;
+
+        // Subtle mouse influence
+        particles.rotation.x += mouseVec.y * 0.01;
+        particles.rotation.y += mouseVec.x * 0.01;
+
+        camera.position.y = -scrollY * 0.005;
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
+
+// ===== GSAP ANIMATIONS =====
+function initAnimations() {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero title animation
+    gsap.to('.line-inner', {
+        y: 0,
+        duration: 1,
+        stagger: 0.15,
+        ease: 'power4.out',
+    });
+
+    // Hero badge
+    gsap.from('.hero-badge', {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        delay: 0.3,
+        ease: 'power3.out',
+    });
+
+    // Hero subtitle
+    gsap.from('.hero-subtitle', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        delay: 0.6,
+        ease: 'power3.out',
+    });
+
+    // Hero actions
+    gsap.from('.hero-actions', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        delay: 0.8,
+        ease: 'power3.out',
+    });
+
+    // Stats counter animation
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(el => {
+        const target = parseInt(el.dataset.count);
+        ScrollTrigger.create({
+            trigger: el,
+            start: 'top 80%',
+            onEnter: () => {
+                gsap.to(el, {
+                    duration: 2,
+                    ease: 'power2.out',
+                    onUpdate: function () {
+                        const progress = this.progress();
+                        el.textContent = Math.round(target * progress).toLocaleString();
+                    },
+                });
+            },
+            once: true,
+        });
+    });
+
+    // Timeline items
+    gsap.utils.toArray('.timeline-item').forEach((item, i) => {
+        gsap.to(item, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 80%',
+                toggleActions: 'play none none none',
+            },
+        });
+    });
+
+    // Tech cards
+    gsap.utils.toArray('.tech-card').forEach((card, i) => {
+        gsap.from(card, {
+            opacity: 0,
+            y: 40,
+            duration: 0.6,
+            delay: i * 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: card,
+                start: 'top 85%',
+                toggleActions: 'play none none none',
+            },
+        });
+    });
+
+    // Paradigm cards
+    gsap.from('.paradigm-card.old', {
+        opacity: 0,
+        x: -40,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '.paradigm-section',
+            start: 'top 75%',
+        },
+    });
+
+    gsap.from('.paradigm-card.new', {
+        opacity: 0,
+        x: 40,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '.paradigm-section',
+            start: 'top 75%',
+        },
+    });
+
+    // Agent layers
+    gsap.utils.toArray('.agent-layer').forEach((layer, i) => {
+        gsap.from(layer, {
+            opacity: 0,
+            x: i % 2 === 0 ? -30 : 30,
+            duration: 0.6,
+            delay: i * 0.15,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: layer,
+                start: 'top 85%',
+            },
+        });
+    });
+
+    // OpenClaw card
+    gsap.from('.claw-hero-card', {
+        opacity: 0,
+        scale: 0.95,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '.claw-hero-card',
+            start: 'top 75%',
+        },
+    });
+
+    // Code window
+    gsap.from('.code-window', {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '.code-window',
+            start: 'top 85%',
+        },
+    });
+
+    // Vision cards
+    gsap.utils.toArray('.vision-card').forEach((card, i) => {
+        gsap.from(card, {
+            opacity: 0,
+            y: 40,
+            duration: 0.6,
+            delay: i * 0.15,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: card,
+                start: 'top 85%',
+            },
+        });
+    });
+
+    // CTA
+    gsap.from('.cta-title', {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '.cta-section',
+            start: 'top 75%',
+        },
+    });
+
+    // Ecosystem orbits - parallax on scroll
+    gsap.to('.eco-orbit:nth-child(2)', {
+        rotation: 360,
+        duration: 20,
+        repeat: -1,
+        ease: 'none',
+    });
+}
+</script>
+</body>
+</html>

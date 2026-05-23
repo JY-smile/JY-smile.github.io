@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安徽新华学院 - 安徽省专升本招生院校信息</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .university-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .university-logo {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .university-info {
+            flex: 1;
+        }
+
+        .university-title {
+            font-size: 2rem;
+            color: #C2185B;
+            margin-bottom: 10px;
+        }
+
+        .university-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .university-stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .stat {
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #C2185B;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #C2185B;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.5rem;
+        }
+
+        .program-list {
+            list-style: none;
+        }
+
+        .program-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .program-item:hover {
+            background: #fce4ec;
+        }
+
+        .program-name {
+            font-weight: 500;
+        }
+
+        .program-type {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .program-type.eng {
+            background: #fce4ec;
+            color: #C2185B;
+        }
+
+        .program-type.sci {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .program-type.arts {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .highlight h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .highlight p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .university-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+
+            .university-logo {
+                width: 120px;
+                height: 120px;
+                font-size: 2.5rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+                margin-top: 20px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .university-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            返回首页
+        </a>
+        <h1><i class="fas fa-school"></i> 安徽新华学院详情信息</h1>
+        <p>安徽省规模较大的民办本科高校，应用型人才培养基地</p>
+    </header>
+
+    <main class="container">
+        <div class="university-header">
+            <div class="university-logo">新华</div>
+            <div class="university-info">
+                <h1 class="university-title">安徽新华学院</h1>
+                <p class="university-subtitle">Anhui Xinhua University | 民办本科 | 合肥市高新区</p>
+                <p>安徽省规模较大、办学实力较强的民办本科高校，致力于培养应用型、创新型人才。</p>
+                
+                <div class="university-stats">
+                    <div class="stat">
+                        <div class="stat-value">28000</div>
+                        <div class="stat-label">在校学生</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">62</div>
+                        <div class="stat-label">本科专业</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">2000</div>
+                        <div class="stat-label">建校年份</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">1600</div>
+                        <div class="stat-label">教职工</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight">
+            <h2>🎓 2025年专升本招生计划</h2>
+            <p>安徽新华学院2025年计划面向全省招收专升本学生1500名，提供多样化的专业选择和实践机会。</p>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2><i class="fas fa-book"></i> 专升本招生专业</h2>
+                <ul class="program-list">
+                    <li class="program-item">
+                        <span class="program-name">计算机科学与技术</span>
+                        <span class="program-type eng">工学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">软件工程</span>
+                        <span class="program-type eng">工学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">电子信息工程</span>
+                        <span class="program-type eng">工学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">财务管理</span>
+                        <span class="program-type sci">管理学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">市场营销</span>
+                        <span class="program-type sci">管理学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">英语</span>
+                        <span class="program-type arts">文学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">视觉传达设计</span>
+                        <span class="program-type arts">艺术类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">护理学</span>
+                        <span class="program-type sci">医学类</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-info-circle"></i> 招生基本信息</h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">招生批次：</span>
+                        <span class="info-value">第二批次</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">招生计划：</span>
+                        <span class="info-value">1500人</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">学费标准：</span>
+                        <span class="info-value">12000-15000元/年</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">学制：</span>
+                        <span class="info-value">2年</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">报名时间：</span>
+                        <span class="info-value">2025年3月1日-3月20日</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">考试时间：</span>
+                        <span class="info-value">2025年4月中旬</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">录取方式：</span>
+                        <span class="info-value">统一考试</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">咨询电话：</span>
+                        <span class="info-value">0551-65872666</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-star"></i> 学校特色</h2>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #C2185B; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>安徽省规模较大的民办本科高校</span>
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #C2185B; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>应用型人才培养模式创新</span>
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #C2185B; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>校企合作深入，实践教学突出</span>
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #C2185B; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>现代化校园设施完善</span>
+                    </li>
+                    <li style="padding: 10px 0; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #C2185B; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>毕业生就业率连续多年保持高位</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-map-marked-alt"></i> 学校地址</h2>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>主校区：</strong>安徽省合肥市高新区望江西路555号</p>
+                    <p><strong>邮编：</strong>230088</p>
+                </div>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <h3 style="color: #666; font-size: 1.1rem; margin-bottom: 10px;">校园设施</h3>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 5px 0;">
+                            <i class="fas fa-wifi" style="color: #C2185B; margin-right: 10px;"></i>
+                            校园无线网络全覆盖
+                        </li>
+                        <li style="padding: 5px 0;">
+                            <i class="fas fa-dumbbell" style="color: #C2185B; margin-right: 10px;"></i>
+                            现代化体育场馆
+                        </li>
+                        <li style="padding: 5px 0;">
+                            <i class="fas fa-book" style="color: #C2185B; margin-right: 10px;"></i>
+                            图书馆藏书丰富
+                        </li>
+                        <li style="padding: 5px 0;">
+                            <i class="fas fa-utensils" style="color: #C2185B; margin-right: 10px;"></i>
+                            多个学生食堂
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 30px;">
+            <h2><i class="fas fa-file-alt"></i> 报考优势</h2>
+            <div style="line-height: 1.8;">
+                <h3 style="color: #333; margin: 15px 0 10px;">学费减免政策：</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>优秀新生奖学金：最高20000元</li>
+                    <li>家庭经济困难学生助学金</li>
+                    <li>品学兼优学生奖学金</li>
+                    <li>校企合作定向培养减免</li>
+                </ul>
+
+                <h3 style="color: #333; margin: 15px 0 10px;">就业保障：</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>与200多家企业建立合作关系</li>
+                    <li>定期举办校园招聘会</li>
+                    <li>提供就业指导与职业规划服务</li>
+                    <li>优秀毕业生推荐就业</li>
+                </ul>
+
+                <h3 style="color: #333; margin: 15px 0 10px;">继续深造：</h3>
+                <ul style="margin-left: 20px;">
+                    <li>提供考研辅导和支持</li>
+                    <li>与国内外高校合作交流项目</li>
+                    <li>专升本后可直接报考硕士研究生</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 style="margin-bottom: 15px;">安徽省专升本招生信息平台</h3>
+            <p style="opacity: 0.8; margin-bottom: 20px;">本页面信息仅供参考，具体招生政策以安徽新华学院官方发布为准。</p>
+            <div class="footer-links">
+                <a href="index.html" style="color: white; text-decoration: none; margin: 0 15px;">返回首页</a>
+                <a href="#" style="color: white; text-decoration: none; margin: 0 15px;">招生简章</a>
+                <a href="#" style="color: white; text-decoration: none; margin: 0 15px;">在线咨询</a>
+                <a href="#" style="color: white; text-decoration: none; margin: 0 15px;">学校官网</a>
+            </div>
+            <p style="margin-top: 30px; opacity: 0.6; font-size: 0.9rem;">© 2025 安徽省专升本招生信息平台 | 安徽新华学院详情页</p>
+        </div>
+    </footer>
+</body>
+</html>

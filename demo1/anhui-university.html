@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安徽大学 - 安徽省专升本招生院校信息</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a73e8 0%, #6a11cb 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .university-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .university-logo {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #1a73e8 0%, #6a11cb 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .university-info {
+            flex: 1;
+        }
+
+        .university-title {
+            font-size: 2rem;
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+
+        .university-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .university-stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .stat {
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a73e8;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #1a73e8;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.5rem;
+        }
+
+        .program-list {
+            list-style: none;
+        }
+
+        .program-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .program-item:hover {
+            background: #e8f0fe;
+        }
+
+        .program-name {
+            font-weight: 500;
+        }
+
+        .program-type {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .program-type.arts {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .program-type.sci {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .program-type.eng {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #1a73e8 0%, #6a11cb 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .highlight h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .highlight p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #1a73e8 0%, #6a11cb 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .university-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+
+            .university-logo {
+                width: 120px;
+                height: 120px;
+                font-size: 2.5rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+                margin-top: 20px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .university-stats {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .highlight {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .back-button {
+                top: 20px;
+                left: 15px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            返回首页
+        </a>
+        <h1><i class="fas fa-university"></i> 安徽大学详情信息</h1>
+        <p>安徽省重点综合性大学，国家"211工程"重点建设高校</p>
+    </header>
+
+    <main class="container">
+        <div class="university-header">
+            <div class="university-logo">安大</div>
+            <div class="university-info">
+                <h1 class="university-title">安徽大学</h1>
+                <p class="university-subtitle">Anhui University | 公办本科 | 合肥市蜀山区</p>
+                <p>安徽大学是国家"双一流"建设高校，安徽省人民政府与教育部共建高校，安徽省属重点综合性大学。</p>
+                
+                <div class="university-stats">
+                    <div class="stat">
+                        <div class="stat-value">45000</div>
+                        <div class="stat-label">在校学生</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">85</div>
+                        <div class="stat-label">本科专业</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">1928</div>
+                        <div class="stat-label">建校年份</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">3200</div>
+                        <div class="stat-label">教职工</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight">
+            <h2>🏆 2025年专升本招生计划</h2>
+            <p>安徽大学2025年计划面向全省招收专升本学生1200名，涵盖文、理、工、管、法、教育等多个学科门类，为优秀专科毕业生提供继续深造的机会。</p>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2><i class="fas fa-book"></i> 专升本招生专业</h2>
+                <ul class="program-list">
+                    <li class="program-item">
+                        <span class="program-name">计算机科学与技术</span>
+                        <span class="program-type eng">工学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">会计学</span>
+                        <span class="program-type sci">管理学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">汉语言文学</span>
+                        <span class="program-type arts">文学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">法学</span>
+                        <span class="program-type arts">法学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">英语</span>
+                        <span class="program-type arts">文学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">金融学</span>
+                        <span class="program-type sci">经济学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">电子信息工程</span>
+                        <span class="program-type eng">工学类</span>
+                    </li>
+                    <li class="program-item">
+                        <span class="program-name">工商管理</span>
+                        <span class="program-type sci">管理学类</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-info-circle"></i> 招生基本信息</h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">招生批次：</span>
+                        <span class="info-value">第一批次</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">招生计划：</span>
+                        <span class="info-value">1200人</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">学费标准：</span>
+                        <span class="info-value">4800-5200元/年</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">学制：</span>
+                        <span class="info-value">2年</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">报名时间：</span>
+                        <span class="info-value">2025年3月1日-3月20日</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">考试时间：</span>
+                        <span class="info-value">2025年4月中旬</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">录取方式：</span>
+                        <span class="info-value">统一考试+综合评价</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">咨询电话：</span>
+                        <span class="info-value">0551-63861166</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-star"></i> 学校特色</h2>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #1a73e8; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>国家"211工程"重点建设高校</span>
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #1a73e8; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>教育部与安徽省共建高校</span>
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #1a73e8; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>安徽省属重点综合性大学</span>
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #1a73e8; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>全国文明校园</span>
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #1a73e8; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>拥有博士、硕士学位授权点</span>
+                    </li>
+                    <li style="padding: 10px 0; display: flex; align-items: flex-start;">
+                        <i class="fas fa-check-circle" style="color: #1a73e8; margin-right: 10px; margin-top: 5px;"></i>
+                        <span>优秀的师资队伍和教学资源</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-map-marked-alt"></i> 学校地址</h2>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>主校区：</strong>安徽省合肥市蜀山区经济技术开发区九龙路111号</p>
+                    <p><strong>邮编：</strong>230601</p>
+                </div>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <h3 style="color: #666; font-size: 1.1rem; margin-bottom: 10px;">交通指南</h3>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 5px 0;">
+                            <i class="fas fa-bus" style="color: #1a73e8; margin-right: 10px;"></i>
+                            公交：乘坐149、128、226路至"安徽大学新区"站
+                        </li>
+                        <li style="padding: 5px 0;">
+                            <i class="fas fa-subway" style="color: #1a73e8; margin-right: 10px;"></i>
+                            地铁：地铁3号线"安大新区"站下车
+                        </li>
+                        <li style="padding: 5px 0;">
+                            <i class="fas fa-car" style="color: #1a73e8; margin-right: 10px;"></i>
+                            自驾：合肥绕城高速金寨路出口下，沿金寨路向南行驶
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 30px;">
+            <h2><i class="fas fa-file-alt"></i> 报考须知</h2>
+            <div style="line-height: 1.8;">
+                <h3 style="color: #333; margin: 15px 0 10px;">报考条件：</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>遵守中华人民共和国宪法和法律</li>
+                    <li>身体健康状况符合国家规定的体检要求</li>
+                    <li>安徽省内普通高校应届专科毕业生</li>
+                    <li>在校期间无违纪处分记录</li>
+                    <li>专科阶段所学专业与报考专业相同或相近</li>
+                </ul>
+
+                <h3 style="color: #333; margin: 15px 0 10px;">报名材料：</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>身份证原件及复印件</li>
+                    <li>专科毕业证书原件及复印件（应届生提供学生证）</li>
+                    <li>专科阶段成绩单</li>
+                    <li>近期免冠彩色照片4张</li>
+                    <li>报名费缴费凭证</li>
+                </ul>
+
+                <h3 style="color: #333; margin: 15px 0 10px;">考试科目：</h3>
+                <ul style="margin-left: 20px;">
+                    <li>公共基础课：大学英语、高等数学/大学语文</li>
+                    <li>专业基础课：根据报考专业确定</li>
+                    <li>总分：300分（公共基础课150分，专业基础课150分）</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 style="margin-bottom: 15px;">安徽省专升本招生信息平台</h3>
+            <p style="opacity: 0.8; margin-bottom: 20px;">本页面信息仅供参考，具体招生政策以安徽大学官方发布为准。</p>
+            <div class="footer-links">
+                <a href="index.html"><i class="fas fa-home"></i> 返回首页</a>
+                <a href="#"><i class="fas fa-download"></i> 招生简章</a>
+                <a href="#"><i class="fas fa-phone-alt"></i> 在线咨询</a>
+                <a href="#"><i class="fas fa-external-link-alt"></i> 学校官网</a>
+            </div>
+            <p style="margin-top: 30px; opacity: 0.6; font-size: 0.9rem;">© 2025 安徽省专升本招生信息平台 | 安徽大学详情页</p>
+        </div>
+    </footer>
+</body>
+</html>

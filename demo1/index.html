@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安徽省普高专升本招生院校信息平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a73e8 0%, #6a11cb 100%);
+            color: white;
+            padding: 30px 0px 50px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .search-box::placeholder {
+            color: #999;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            flex-wrap: nowrap; /* 确保在一行显示 */
+            gap: 15px;
+            padding: 0 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 15px;
+            background: linear-gradient(135deg, #1a73e8 0%, #1a73e8 100%);
+            border-radius: 12px;
+            min-width: 0; /* 移除最小宽度限制 */
+            flex: 1; /* 弹性布局，平均分配空间 */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        .universities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .university-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+        }
+
+        .university-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .university-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .university-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .university-content {
+            padding: 25px;
+        }
+
+        .university-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1a73e8;
+        }
+
+        .university-location {
+            display: flex;
+            align-items: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .university-location span {
+            margin-left: 8px;
+        }
+
+        .university-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a73e8;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: #f5f7fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: #e8f0fe;
+            border-color: #1a73e8;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+        }
+
+        .filter-section {
+            margin-bottom: 25px;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group-title {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .quick-stats {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .quick-stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-stat-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .quick-stat-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            background: #e8f0fe;
+            color: #1a73e8;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #c5d9f9;
+        }
+
+        .tag:hover {
+            background: #1a73e8;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.2);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+            font-size: 1.2rem;
+            display: none;
+            grid-column: 1 / -1;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #1a73e8 0%, #6a11cb 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .universities-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+
+            .stats {
+                flex-wrap: nowrap; /* 保持在一行 */
+                gap: 10px;
+                padding: 0 5px;
+                margin-top: 20px;
+            }
+
+            .stat-item {
+                padding: 15px 10px;
+                min-width: 0;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+
+            .stat-label {
+                font-size: 0.9rem;
+            }
+
+            .filters {
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .filter-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .search-section {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .universities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-section {
+                padding: 20px;
+            }
+
+            .stats {
+                flex-wrap: nowrap;
+                gap: 8px;
+                padding: 0 3px;
+                margin-top: 15px;
+            }
+
+            .stat-item {
+                min-width: 0;
+                padding: 12px 8px;
+                border-radius: 8px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .filters {
+                gap: 6px;
+            }
+
+            .filter-btn {
+                padding: 5px 10px;
+                font-size: 0.8rem;
+            }
+
+            .filter-group-title {
+                font-size: 0.9rem;
+            }
+
+            .university-card:hover {
+                transform: translateY(-5px);
+            }
+        }
+
+        @media (max-width: 360px) {
+            .stats {
+                gap: 5px;
+                padding: 0 2px;
+            }
+
+            .stat-item {
+                padding: 10px 6px;
+                border-radius: 6px;
+            }
+
+            .stat-number {
+                font-size: 1.3rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .filter-btn {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+            
+            .university-name {
+                font-size: 1.2rem;
+            }
+            
+            .university-content {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <h1><i class="fas fa-graduation-cap"></i> 安徽省普高专升本招生院校信息平台</h1>
+        <p>全面汇总安徽省普通高校专升本考试招生院校信息，为您提供一站式查询服务</p>
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="total-universities">0</div>
+                <div class="stat-label">招生院校总数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="public-universities">0</div>
+                <div class="stat-label">公办院校</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="private-universities">0</div>
+                <div class="stat-label">民办院校</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="search-section">
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索院校名称、所在城市或专业...">
+            
+            <div class="filter-section">
+                <div class="filter-group">
+                    <div class="filter-group-title"><i class="fas fa-filter"></i> 院校类型筛选</div>
+                    <div class="filters">
+                        <button class="filter-btn active" data-filter="all">全部院校 (42)</button>
+                        <button class="filter-btn" data-filter="public">公办院校 (28)</button>
+                        <button class="filter-btn" data-filter="private">民办院校 (14)</button>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="filter-group-title"><i class="fas fa-map-marker-alt"></i> 所在城市筛选</div>
+                    <div class="filters">
+                        <button class="filter-btn" data-filter="hefei">合肥市 (12)</button>
+                        <button class="filter-btn" data-filter="wuhu">芜湖市 (2)</button>
+                        <button class="filter-btn" data-filter="fuyang">阜阳市 (2)</button>
+                        <button class="filter-btn" data-filter="maanshan">马鞍山市 (2)</button>
+                        <button class="filter-btn" data-filter="bengbu">蚌埠市 (5)</button>
+                        <button class="filter-btn" data-filter="anqing">安庆市 (1)</button>
+                        <button class="filter-btn" data-filter="huainan">淮南市 (1)</button>
+                        <button class="filter-btn" data-filter="chuzhou">滁州市 (0)</button>
+                        <button class="filter-btn" data-filter="suzhou">宿州市 (1)</button>
+                        <button class="filter-btn" data-filter="huangshan">黄山市 (1)</button>
+                        <button class="filter-btn" data-filter="chizhou">池州市 (1)</button>
+                        <button class="filter-btn" data-filter="bozhou">亳州市 (1)</button>
+                        <button class="filter-btn" data-filter="huaibei">淮北市 (1)</button>
+                        <button class="filter-btn" data-filter="liuan">六安市 (1)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-results" id="noResults">
+                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                <h3>未找到匹配的院校</h3>
+                <p>请尝试其他搜索关键词或筛选条件</p>
+            </div>
+            
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <span class="quick-stat-label">热门搜索：</span>
+                    <span class="quick-stat-tags">
+                        <span class="tag" data-search="合肥">合肥</span>
+                        <span class="tag" data-search="师范">师范</span>
+                        <span class="tag" data-search="医学">医学</span>
+                        <span class="tag" data-search="理工">理工</span>
+                        <span class="tag" data-search="财经">财经</span>
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <section class="universities-section">
+            <h2 style="font-size: 1.8rem; margin-bottom: 20px; color: #000000;">招生院校列表</h2>
+            <div class="universities-grid" id="universitiesGrid">
+                <!-- 院校卡片将通过JavaScript动态生成 -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 style="margin-bottom: 15px;">安徽省专升本招生信息平台</h3>
+            <p style="opacity: 0.8; margin-bottom: 20px;">本平台提供安徽省普通高校专升本考试招生院校最新信息，仅供参考，具体招生政策以官方发布为准。</p>
+            <div class="footer-links">
+                <a href="./about.html"><i class="fas fa-info-circle"></i> 关于我们</a>
+                <a href="#"><i class="fas fa-question-circle"></i> 使用帮助</a>
+                <a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a>
+                <a href="#"><i class="fas fa-envelope"></i> 联系我们</a>
+            </div>
+            <p style="margin-top: 30px; opacity: 0.6; font-size: 0.9rem;">© 2025 安徽省专升本招生信息平台 版权所有</p>
+        </div>
+    </footer>
+
+    <script>
+        // 安徽省专升本招生院校数据（2025年最新）
+        const universities = [
+            // 公办院校 (27所)
+            {
+                id: 1,
+                name: "安徽工业大学",
+                city: "马鞍山市",
+                type: "public",
+                logo: "安工大",
+                students: "28000",
+                majors: "72",
+                ranking: "省内重点工科大学",
+                description: "安徽省重点工科大学，冶金特色鲜明，省部共建高校",
+                link: "ahut.html"
+            },
+            {
+                id: 2,
+                name: "安徽农业大学",
+                city: "合肥市",
+                type: "public",
+                logo: "安农大",
+                students: "26000",
+                majors: "80",
+                ranking: "省内重点农业院校",
+                description: "安徽省重点农业高等院校，农科特色鲜明",
+                link: "ahau.html"
+            },
+            {
+                id: 3,
+                name: "安徽医科大学",
+                city: "合肥市",
+                type: "public",
+                logo: "安医大",
+                students: "22000",
+                majors: "35",
+                ranking: "省内重点医学院校",
+                description: "安徽省重点医学高等院校，教育部、国家卫健委共建高校",
+                link: "ahmu.html"
+            },
+            {
+                id: 4,
+                name: "安徽师范大学",
+                city: "芜湖市",
+                type: "public",
+                logo: "安师大",
+                students: "32000",
+                majors: "88",
+                ranking: "省内重点师范大学",
+                description: "安徽省重点师范大学，教育部\"卓越教师培养计划\"高校",
+                link: "ahnu.html"
+            },
+            {
+                id: 5,
+                name: "安徽建筑大学",
+                city: "合肥市",
+                type: "public",
+                logo: "安建大",
+                students: "21000",
+                majors: "61",
+                ranking: "省内唯一土建类",
+                description: "安徽省唯一土建类本科高校，建筑特色鲜明",
+                link: "ahjzu.html"
+            },
+            {
+                id: 6,
+                name: "阜阳师范大学",
+                city: "阜阳市",
+                type: "public",
+                logo: "阜师大",
+                students: "23000",
+                majors: "68",
+                ranking: "皖北重点师范",
+                description: "皖北地区重要师范院校，为基础教育培养师资",
+                link: "fysf.html"
+            },
+            {
+                id: 7,
+                name: "安徽中医药大学",
+                city: "合肥市",
+                type: "public",
+                logo: "安中医",
+                students: "15000",
+                majors: "28",
+                ranking: "省内中医药龙头",
+                description: "安徽省中医药高等教育龙头，中医药特色鲜明",
+                link: "ahzy.html"
+            },
+            {
+                id: 8,
+                name: "安庆师范大学",
+                city: "安庆市",
+                type: "public",
+                logo: "安庆师",
+                students: "22000",
+                majors: "60",
+                ranking: "皖西南重点",
+                description: "皖西南地区重要本科院校，师范教育优势明显",
+                link: "aqsf.html"
+            },
+            {
+                id: 9,
+                name: "蚌埠医科大学",
+                city: "蚌埠市",
+                type: "public",
+                logo: "蚌医大",
+                students: "18000",
+                majors: "25",
+                ranking: "皖北医学中心",
+                description: "皖北地区医学教育中心，临床医学特色突出",
+                link: "bbyd.html"
+            },
+            {
+                id: 10,
+                name: "皖南医学院",
+                city: "芜湖市",
+                type: "public",
+                logo: "皖医",
+                students: "16000",
+                majors: "22",
+                ranking: "皖南医学高地",
+                description: "皖南地区重要医学院校，医学教育质量优良",
+                link: "wnyxy.html"
+            },
+            {
+                id: 11,
+                name: "淮南师范学院",
+                city: "淮南市",
+                type: "public",
+                logo: "淮师院",
+                students: "19000",
+                majors: "55",
+                ranking: "皖中师范重镇",
+                description: "皖中地区重要师范院校，教师教育特色鲜明",
+                link: "hnsf.html"
+            },
+            {
+                id: 12,
+                name: "安徽科技学院",
+                city: "蚌埠市",
+                type: "public",
+                logo: "安科院",
+                students: "20000",
+                majors: "58",
+                ranking: "应用型示范",
+                description: "安徽省示范应用型本科高校，应用型人才培养特色（新校区在蚌埠市）",
+                link: "ahkj.html"
+            },
+            {
+                id: 13,
+                name: "皖西学院",
+                city: "六安市",
+                type: "public",
+                logo: "皖西",
+                students: "21000",
+                majors: "62",
+                ranking: "大别山区域中心",
+                description: "大别山区域重要本科院校，综合性应用型大学",
+                link: "wxxy.html"
+            },
+            {
+                id: 14,
+                name: "合肥大学",
+                city: "合肥市",
+                type: "public",
+                logo: "合肥大",
+                students: "24000",
+                majors: "65",
+                ranking: "省会城市大学",
+                description: "合肥市属综合性本科高校，服务地方经济发展",
+                link: "hfdx.html"
+            },
+            {
+                id: 15,
+                name: "黄山学院",
+                city: "黄山市",
+                type: "public",
+                logo: "黄山",
+                students: "18000",
+                majors: "52",
+                ranking: "旅游文化特色",
+                description: "以旅游、生态、文化为特色的应用型本科高校",
+                link: "hsxy.html"
+            },
+            {
+                id: 16,
+                name: "巢湖学院",
+                city: "合肥市",
+                type: "public",
+                logo: "巢湖",
+                students: "17000",
+                majors: "48",
+                ranking: "环巢湖区域高校",
+                description: "环巢湖区域重要本科院校，应用型人才培养基地",
+                link: "chxy.html"
+            },
+            {
+                id: 17,
+                name: "铜陵学院",
+                city: "铜陵市",
+                type: "public",
+                logo: "铜陵",
+                students: "19000",
+                majors: "54",
+                ranking: "财经应用特色",
+                description: "以财经学科为特色的应用型本科高校",
+                link: "tlxy.html"
+            },
+            {
+                id: 18,
+                name: "滁州学院",
+                city: "滁州市",
+                type: "public",
+                logo: "滁州",
+                students: "21000",
+                majors: "59",
+                ranking: "应用技术大学",
+                description: "应用技术型本科高校，服务地方产业转型升级",
+                link: "czxy.html"
+            },
+            {
+                id: 19,
+                name: "宿州学院",
+                city: "宿州市",
+                type: "public",
+                logo: "宿州",
+                students: "20000",
+                majors: "56",
+                ranking: "皖北应用型高校",
+                description: "皖北地区应用型本科高校，服务区域经济社会发展",
+                link: "szxy.html"
+            },
+            {
+                id: 20,
+                name: "合肥师范学院",
+                city: "合肥市",
+                type: "public",
+                logo: "合师院",
+                students: "22000",
+                majors: "63",
+                ranking: "省会师范院校",
+                description: "合肥市属师范院校，为基础教育培养优秀师资",
+                link: "hfsf.html"
+            },
+            {
+                id: 21,
+                name: "蚌埠学院",
+                city: "蚌埠市",
+                type: "public",
+                logo: "蚌埠",
+                students: "18000",
+                majors: "50",
+                ranking: "蚌埠地方高校",
+                description: "蚌埠市属综合性本科高校，应用型人才培养",
+                link: "bbxy.html"
+            },
+            {
+                id: 22,
+                name: "池州学院",
+                city: "池州市",
+                type: "public",
+                logo: "池州",
+                students: "16000",
+                majors: "46",
+                ranking: "生态旅游特色",
+                description: "以生态、旅游为特色的应用型本科高校",
+                link: "czxy2.html"
+            },
+            {
+                id: 23,
+                name: "亳州学院",
+                city: "亳州市",
+                type: "public",
+                logo: "亳州",
+                students: "15000",
+                majors: "42",
+                ranking: "中医药文化特色",
+                description: "以中医药文化为特色的应用型本科高校",
+                link: "bzxy.html"
+            },
+            {
+                id: 24,
+                name: "安徽艺术学院",
+                city: "合肥市",
+                type: "public",
+                logo: "安艺",
+                students: "8000",
+                majors: "25",
+                ranking: "艺术专业院校",
+                description: "安徽省属艺术类本科高校，艺术人才培养基地",
+                link: "ahys.html"
+            },
+            {
+                id: 25,
+                name: "芜湖职业技术大学",
+                city: "芜湖市",
+                type: "public",
+                logo: "芜职大",
+                students: "22000",
+                majors: "45",
+                ranking: "职业本科试点",
+                description: "首批职业本科试点院校，技术技能人才培养",
+                link: "whzy.html"
+            },
+            {
+                id: 26,
+                name: "安徽职业技术大学",
+                city: "合肥市",
+                type: "public",
+                logo: "安职大",
+                students: "20000",
+                majors: "40",
+                ranking: "职业本科示范",
+                description: "职业本科示范院校，应用型技术人才培养",
+                link: "ahzy.html"
+            },
+            {
+                id: 27,
+                name: "安徽第二医学院",
+                city: "合肥市",
+                type: "public",
+                logo: "安二医",
+                students: "12000",
+                majors: "20",
+                ranking: "医学特色院校",
+                description: "医学类本科高校，培养基层医疗卫生人才",
+                link: "ahdeyy.html"
+            },
+            {
+                id: 28,
+                name: "安徽财经大学",
+                city: "蚌埠市",
+                type: "public",
+                logo: "安财大",
+                students: "25000",
+                majors: "65",
+                ranking: "省内财经类重点大学",
+                description: "安徽省重点财经类大学，财经特色鲜明，省部共建高校",
+                link: "ahcd.html"
+            },
+            
+            // 民办院校 (14所)
+            {
+                id: 29,
+                name: "芜湖学院",
+                city: "芜湖市",
+                type: "private",
+                logo: "芜院",
+                students: "18000",
+                majors: "42",
+                ranking: "民办应用型",
+                description: "芜湖市民办本科高校，应用型人才培养",
+                link: "whxy.html"
+            },
+            {
+                id: 30,
+                name: "安徽新华学院",
+                city: "合肥市",
+                type: "private",
+                logo: "新华",
+                students: "28000",
+                majors: "62",
+                ranking: "民办规模领先",
+                description: "安徽省规模较大的民办本科高校，办学实力雄厚",
+                link: "axhu.html"
+            },
+            {
+                id: 31,
+                name: "安徽三联学院",
+                city: "合肥市",
+                type: "private",
+                logo: "三联",
+                students: "18000",
+                majors: "45",
+                ranking: "民办首批高校",
+                description: "安徽省首批民办本科高校，办学经验丰富",
+                link: "slxy.html"
+            },
+            {
+                id: 32,
+                name: "安徽外国语学院",
+                city: "合肥市",
+                type: "private",
+                logo: "安外",
+                students: "12000",
+                majors: "25",
+                ranking: "外语特色鲜明",
+                description: "安徽省唯一专业外语本科高校，外语人才培养基地",
+                link: "ahwgy.html"
+            },
+            {
+                id: 32,
+                name: "安徽信息工程学院",
+                city: "芜湖市",
+                type: "private",
+                logo: "信工",
+                students: "16000",
+                majors: "38",
+                ranking: "信息技术特色",
+                description: "以信息技术为特色的民办本科高校",
+                link: "ahxxgc.html"
+            },
+            {
+                id: 33,
+                name: "合肥经济学院",
+                city: "合肥市",
+                type: "private",
+                logo: "合经院",
+                students: "15000",
+                majors: "35",
+                ranking: "经济管理特色",
+                description: "以经济管理学科为特色的民办本科高校",
+                link: "hfjjxy.html"
+            },
+            {
+                id: 34,
+                name: "合肥城市学院",
+                city: "合肥市",
+                type: "private",
+                logo: "合城院",
+                students: "14000",
+                majors: "32",
+                ranking: "城市建设特色",
+                description: "以城市建设为特色的民办本科高校",
+                link: "hfcsxy.html"
+            },
+            {
+                id: 35,
+                name: "蚌埠工商学院",
+                city: "蚌埠市",
+                type: "private",
+                logo: "蚌工商",
+                students: "13000",
+                majors: "30",
+                ranking: "工商管理特色",
+                description: "以工商管理为特色的民办本科高校",
+                link: "bbgsxy.html"
+            },
+            {
+                id: 36,
+                name: "阜阳理工学院",
+                city: "阜阳市",
+                type: "private",
+                logo: "阜理工",
+                students: "12000",
+                majors: "28",
+                ranking: "理工科特色",
+                description: "阜阳市民办理工科本科高校",
+                link: "fylgxy.html"
+            },
+            {
+                id: 37,
+                name: "皖江工学院",
+                city: "马鞍山市",
+                type: "private",
+                logo: "皖江工",
+                students: "11000",
+                majors: "26",
+                ranking: "工科应用特色",
+                description: "以工科为特色的民办应用型本科高校",
+                link: "wjgcxy.html"
+            },
+            {
+                id: 38,
+                name: "淮北理工学院",
+                city: "淮北市",
+                type: "private",
+                logo: "淮理工",
+                students: "10000",
+                majors: "24",
+                ranking: "理工科民办",
+                description: "淮北市民办理工科本科高校",
+                link: "hblgxy.html"
+            },
+            {
+                id: 39,
+                name: "马鞍山学院",
+                city: "马鞍山市",
+                type: "private",
+                logo: "马院",
+                students: "9000",
+                majors: "22",
+                ranking: "应用技术特色",
+                description: "马鞍山市民办应用型本科高校",
+                link: "masxy.html"
+            },
+            {
+                id: 40,
+                name: "安徽文达信息工程学院",
+                city: "合肥市",
+                type: "private",
+                logo: "文达",
+                students: "15000",
+                majors: "38",
+                ranking: "信息技术民办",
+                description: "以信息技术为特色的民办本科高校",
+                link: "ahwdxx.html"
+            },
+            {
+                id: 41,
+                name: "安徽医科大学临床医学院",
+                city: "合肥市",
+                type: "private",
+                logo: "安医临床",
+                students: "8000",
+                majors: "15",
+                ranking: "医学民办特色",
+                description: "安徽医科大学举办的独立学院，医学特色鲜明",
+                link: "ahmylc.html"
+            }
+        ];
+
+        // 初始化统计数据
+        function updateStats() {
+            const total = universities.length;
+            const publicCount = universities.filter(u => u.type === "public").length;
+            const privateCount = universities.filter(u => u.type === "private").length;
+            
+            document.getElementById('total-universities').textContent = total;
+            document.getElementById('public-universities').textContent = publicCount;
+            document.getElementById('private-universities').textContent = privateCount;
+            
+            // 更新筛选按钮数量
+            updateFilterCounts();
+        }
+        
+        // 更新各城市筛选按钮的院校数量
+        function updateFilterCounts() {
+            const cityCounts = {};
+            
+            // 统计各城市院校数量
+            universities.forEach(university => {
+                const city = university.city.replace('市', '');
+                if (!cityCounts[city]) {
+                    cityCounts[city] = 0;
+                }
+                cityCounts[city]++;
+            });
+            
+            // 更新筛选按钮文本
+            document.querySelectorAll('.filter-btn').forEach(button => {
+                const filter = button.dataset.filter;
+                if (filter === 'all') {
+                    button.textContent = `全部院校 (${universities.length})`;
+                } else if (filter === 'public') {
+                    button.textContent = `公办院校 (${universities.filter(u => u.type === 'public').length})`;
+                } else if (filter === 'private') {
+                    button.textContent = `民办院校 (${universities.filter(u => u.type === 'private').length})`;
+                } else {
+                    // 城市筛选
+                    const cityName = getCityChineseName(filter);
+                    if (cityCounts[cityName]) {
+                        button.textContent = `${cityName}市 (${cityCounts[cityName]})`;
+                    }
+                }
+            });
+        }
+        
+        // 获取城市中文名称
+        function getCityChineseName(cityCode) {
+            const cityMap = {
+                'hefei': '合肥',
+                'wuhu': '芜湖',
+                'fuyang': '阜阳',
+                'maanshan': '马鞍山',
+                'anqing': '安庆',
+                'bengbu': '蚌埠',
+                'huainan': '淮南',
+                'chuzhou': '滁州',
+                'suzhou': '宿州',
+                'huangshan': '黄山',
+                'chizhou': '池州',
+                'bozhou': '亳州',
+                'huaibei': '淮北',
+                'liuan': '六安'
+            };
+            return cityMap[cityCode] || cityCode;
+        }
+
+        // 渲染院校卡片 - 支持高亮和排序
+        function renderUniversities(filteredUniversities = universities) {
+            const grid = document.getElementById('universitiesGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (filteredUniversities.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.add('show');
+                return;
+            }
+            
+            noResults.classList.remove('show');
+            
+            // 如果有搜索词，计算匹配分数并排序
+            let universitiesToRender = [...filteredUniversities];
+            if (currentSearch) {
+                universitiesToRender = universitiesToRender.map(university => ({
+                    ...university,
+                    _matchScore: getMatchScore(university, currentSearch)
+                })).sort((a, b) => b._matchScore - a._matchScore);
+            }
+            
+            grid.innerHTML = universitiesToRender.map(university => {
+                // 高亮匹配的文本
+                const highlightedName = highlightText(university.name, currentSearch);
+                const highlightedCity = highlightText(university.city, currentSearch);
+                const highlightedDescription = highlightText(university.description, currentSearch);
+                const highlightedRanking = highlightText(university.ranking, currentSearch);
+                
+                return `
+                <a href="${university.link}" class="university-card" data-type="${university.type}" data-city="${university.city}">
+                    ${university.type === 'private' ? '<span class="university-badge">民办</span>' : ''}
+                    <div class="university-img" style="background: linear-gradient(135deg, ${university.type === 'public' ? '#1a73e8, #6a11cb' : '#ff6b6b, #ff8e8e'}); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; font-weight: bold;">
+                        ${university.logo}
+                    </div>
+                    <div class="university-content">
+                        <h3 class="university-name">${highlightedName}</h3>
+                        <div class="university-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${highlightedCity}</span>
+                        </div>
+                        <p style="color: #666; font-size: 0.95rem; line-height: 1.5;">${highlightedDescription}</p>
+                        <div class="university-info">
+                            <div class="info-item">
+                                <div class="info-label">在校生</div>
+                                <div class="info-value">${university.students}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">专业数</div>
+                                <div class="info-value">${university.majors}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">排名</div>
+                                <div class="info-value">${highlightedRanking}</div>
+                            </div>
+                        </div>
+                        ${currentSearch && university._matchScore > 0 ? `
+                        <div style="margin-top: 10px; font-size: 0.8rem; color: #666; text-align: right;">
+                            <i class="fas fa-star" style="color: #ffd700;"></i> 匹配度: ${university._matchScore}%
+                        </div>
+                        ` : ''}
+                    </div>
+                </a>
+                `;
+            }).join('');
+        }
+
+        // 组合筛选数据结构
+        let activeFilters = {
+            type: new Set(), // 存储选中的类型：'public', 'private'
+            city: new Set()  // 存储选中的城市代码：'hefei', 'wuhu', 等
+        };
+        
+        // 全局搜索变量
+        let currentSearch = '';
+
+        // 搜索功能
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            // 城市代码到中文名称的映射
+            const cityCodeToName = {
+                'hefei': '合肥市',
+                'wuhu': '芜湖市',
+                'fuyang': '阜阳市',
+                'maanshan': '马鞍山市',
+                'anqing': '安庆市',
+                'bengbu': '蚌埠市',
+                'huainan': '淮南市',
+                'chuzhou': '滁州市',
+                'suzhou': '宿州市',
+                'huangshan': '黄山市',
+                'chizhou': '池州市',
+                'bozhou': '亳州市',
+                'huaibei': '淮北市',
+                'liuan': '六安市'
+            };
+
+            // 中文名称到城市代码的映射
+            const cityNameToCode = {
+                '合肥市': 'hefei',
+                '芜湖市': 'wuhu',
+                '阜阳市': 'fuyang',
+                '马鞍山市': 'maanshan',
+                '安庆市': 'anqing',
+                '蚌埠市': 'bengbu',
+                '淮南市': 'huainan',
+                '滁州市': 'chuzhou',
+                '宿州市': 'suzhou',
+                '黄山市': 'huangshan',
+                '池州市': 'chizhou',
+                '亳州市': 'bozhou',
+                '淮北市': 'huaibei',
+                '六安市': 'liuan'
+            };
+
+            function filterUniversities() {
+                return universities.filter(university => {
+                    // 应用类型筛选
+                    if (activeFilters.type.size > 0) {
+                        if (!activeFilters.type.has(university.type)) {
+                            return false;
+                        }
+                    }
+                    
+                    // 应用城市筛选
+                    if (activeFilters.city.size > 0) {
+                        const cityCode = cityNameToCode[university.city];
+                        if (!cityCode || !activeFilters.city.has(cityCode)) {
+                            return false;
+                        }
+                    }
+                    
+                    // 应用搜索 - 支持拼音搜索和模糊匹配
+                    if (currentSearch) {
+                        return fuzzyMatch(university, currentSearch);
+                    }
+                    
+                    return true;
+                });
+            }
+            
+            function updateDisplay() {
+                const filtered = filterUniversities();
+                renderUniversities(filtered);
+                
+                // 更新显示结果数量
+                updateResultsCount(filtered.length);
+            }
+            
+            // 更新结果显示数量和筛选状态
+            function updateResultsCount(count) {
+                const resultsTitle = document.querySelector('.universities-section h2');
+                if (!resultsTitle) return;
+                
+                let filterText = '';
+                const hasTypeFilter = activeFilters.type.size > 0;
+                const hasCityFilter = activeFilters.city.size > 0;
+                const hasSearch = currentSearch.trim().length > 0;
+                
+                if (!hasTypeFilter && !hasCityFilter && !hasSearch) {
+                    resultsTitle.textContent = `招生院校列表 (${count}所)`;
+                    return;
+                }
+                
+                // 构建筛选描述
+                const filterParts = [];
+                
+                if (hasTypeFilter) {
+                    const typeNames = Array.from(activeFilters.type).map(type => 
+                        type === 'public' ? '公办' : '民办'
+                    );
+                    filterParts.push(typeNames.join('、'));
+                }
+                
+                if (hasCityFilter) {
+                    const cityNames = Array.from(activeFilters.city).map(code => 
+                        cityCodeToName[code]?.replace('市', '') || code
+                    );
+                    filterParts.push(cityNames.join('、'));
+                }
+                
+                if (hasSearch) {
+                    filterParts.push(`搜索"${currentSearch}"`);
+                }
+                
+                if (filterParts.length > 0) {
+                    filterText = ` (${filterParts.join(' + ')})`;
+                }
+                
+                resultsTitle.textContent = `筛选结果: ${count}所${filterText}`;
+            }
+            
+            // 搜索框事件 - 使用去抖优化性能
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                
+                const searchValue = this.value;
+                
+                searchTimeout = setTimeout(() => {
+                    currentSearch = searchValue.toLowerCase().trim();
+                    updateDisplay();
+                }, 150); // 150ms延迟，减少不必要的渲染
+            });
+            
+            // 筛选按钮事件 - 支持多选
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    const filterType = this.dataset.filter;
+                    const isCityFilter = !['all', 'public', 'private'].includes(filterType);
+                    
+                    // 检查是否按住Ctrl键或Shift键进行多选
+                    const isMultiSelect = event.ctrlKey || event.shiftKey || event.metaKey;
+                    
+                    if (filterType === 'all') {
+                        // 点击"全部"按钮重置所有筛选
+                        activeFilters.type.clear();
+                        activeFilters.city.clear();
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                    } else {
+                        if (isCityFilter) {
+                            // 城市筛选
+                            if (isMultiSelect) {
+                                // 多选模式：切换选中状态
+                                if (activeFilters.city.has(filterType)) {
+                                    activeFilters.city.delete(filterType);
+                                    this.classList.remove('active');
+                                } else {
+                                    activeFilters.city.add(filterType);
+                                    this.classList.add('active');
+                                }
+                            } else {
+                                // 单选模式：清空其他城市筛选
+                                activeFilters.city.clear();
+                                document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+                                    const btnFilter = btn.dataset.filter;
+                                    if (!['all', 'public', 'private'].includes(btnFilter)) {
+                                        btn.classList.remove('active');
+                                    }
+                                });
+                                activeFilters.city.add(filterType);
+                                this.classList.add('active');
+                            }
+                        } else {
+                            // 类型筛选
+                            if (isMultiSelect) {
+                                // 多选模式：切换选中状态
+                                if (activeFilters.type.has(filterType)) {
+                                    activeFilters.type.delete(filterType);
+                                    this.classList.remove('active');
+                                } else {
+                                    activeFilters.type.add(filterType);
+                                    this.classList.add('active');
+                                }
+                            } else {
+                                // 单选模式：清空其他类型筛选
+                                activeFilters.type.clear();
+                                document.querySelectorAll('.filter-btn[data-filter="all"], .filter-btn[data-filter="public"], .filter-btn[data-filter="private"]').forEach(btn => {
+                                    btn.classList.remove('active');
+                                });
+                                activeFilters.type.add(filterType);
+                                this.classList.add('active');
+                            }
+                        }
+                    }
+                    
+                    // 更新显示
+                    updateDisplay();
+                });
+            });
+            
+            // 初始渲染
+            updateDisplay();
+        }
+
+        // 快速搜索标签功能
+        function setupQuickSearch() {
+            const tags = document.querySelectorAll('.tag');
+            const searchInput = document.getElementById('searchInput');
+            
+            tags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const searchText = this.dataset.search;
+                    searchInput.value = searchText;
+                    searchInput.focus();
+                    
+                    // 触发输入事件以进行搜索
+                    const event = new Event('input', {
+                        bubbles: true,
+                        cancelable: true,
+                    });
+                    searchInput.dispatchEvent(event);
+                });
+            });
+        }
+
+        // 中文转拼音函数（简化版）
+        function toPinyin(chinese) {
+            const pinyinMap = {
+                '安': 'an', '徽': 'hui', '工': 'gong', '业': 'ye', '大': 'da', '学': 'xue',
+                '农': 'nong', '医': 'yi', '科': 'ke', '师': 'shi', '范': 'fan',
+                '建': 'jian', '筑': 'zhu', '阜': 'fu', '阳': 'yang', '中': 'zhong', '药': 'yao',
+                '庆': 'qing', '蚌': 'beng', '埠': 'bu', '皖': 'wan', '南': 'nan', '淮': 'huai',
+                '技': 'ji', '合': 'he', '肥': 'fei', '黄': 'huang', '山': 'shan',
+                '巢': 'chao', '湖': 'hu', '铜': 'tong', '陵': 'ling', '滁': 'chu', '州': 'zhou',
+                '宿': 'su', '池': 'chi', '亳': 'bo', '艺': 'yi', '术': 'shu', '芜': 'wu',
+                '职': 'zhi', '新': 'xin', '华': 'hua', '三': 'san', '联': 'lian',
+                '外': 'wai', '国': 'guo', '语': 'yu', '信': 'xin', '息': 'xi', '经': 'jing',
+                '济': 'ji', '城': 'cheng', '理': 'li', '文': 'wen', '达': 'da', '临': 'lin',
+                '床': 'chuang', '院': 'yuan'
+            };
+            
+            let pinyin = '';
+            for (let char of chinese) {
+                pinyin += pinyinMap[char] || char;
+            }
+            return pinyin;
+        }
+
+        // 获取字符串首字母
+        function getInitials(text) {
+            return text.split('').map(char => {
+                const pinyinChar = toPinyin(char);
+                return pinyinChar ? pinyinChar[0] : '';
+            }).join('');
+        }
+
+        // 为大学数据预计算搜索关键词
+        function precomputeSearchData() {
+            universities.forEach(university => {
+                // 预计算拼音和首字母
+                university._searchData = {
+                    nameLower: university.name.toLowerCase(),
+                    cityLower: university.city.toLowerCase(),
+                    descriptionLower: university.description.toLowerCase(),
+                    logoLower: university.logo.toLowerCase(),
+                    rankingLower: university.ranking.toLowerCase(),
+                    namePinyin: toPinyin(university.name),
+                    nameInitials: getInitials(university.name),
+                    allKeywords: [
+                        university.name.toLowerCase(),
+                        university.city.toLowerCase(),
+                        university.description.toLowerCase(),
+                        university.logo.toLowerCase(),
+                        university.ranking.toLowerCase(),
+                        toPinyin(university.name),
+                        getInitials(university.name)
+                    ].filter(kw => kw).join(' ')
+                };
+            });
+        }
+
+        // 模糊匹配函数 - 优化版
+        function fuzzyMatch(university, pattern) {
+            if (!pattern) return true;
+            
+            const patternLower = pattern.toLowerCase();
+            const searchData = university._searchData;
+            
+            // 如果有关键词数据，直接检查关键词字符串
+            if (searchData.allKeywords.includes(patternLower)) {
+                return true;
+            }
+            
+            // 检查各个字段
+            if (searchData.nameLower.includes(patternLower) ||
+                searchData.cityLower.includes(patternLower) ||
+                searchData.descriptionLower.includes(patternLower) ||
+                searchData.rankingLower.includes(patternLower) ||
+                searchData.logoLower.includes(patternLower) ||
+                searchData.namePinyin.includes(patternLower) ||
+                searchData.nameInitials.includes(patternLower)) {
+                return true;
+            }
+            
+            return false;
+        }
+
+        // 高亮文本函数
+        function highlightText(text, searchTerm) {
+            if (!searchTerm || !text) return text;
+            
+            const searchLower = searchTerm.toLowerCase();
+            const textLower = text.toLowerCase();
+            
+            // 查找所有匹配位置
+            const matches = [];
+            let startIndex = 0;
+            
+            while ((startIndex = textLower.indexOf(searchLower, startIndex)) !== -1) {
+                matches.push({
+                    start: startIndex,
+                    end: startIndex + searchLower.length
+                });
+                startIndex += searchLower.length;
+            }
+            
+            if (matches.length === 0) return text;
+            
+            // 构建高亮后的文本
+            let highlighted = '';
+            let lastIndex = 0;
+            
+            for (const match of matches) {
+                // 添加匹配前的文本
+                highlighted += text.substring(lastIndex, match.start);
+                // 添加高亮标记
+                highlighted += `<mark style="background-color: #ffd700; color: #000; padding: 0 2px; border-radius: 2px;">${text.substring(match.start, match.end)}</mark>`;
+                lastIndex = match.end;
+            }
+            
+            // 添加剩余文本
+            highlighted += text.substring(lastIndex);
+            
+            return highlighted;
+        }
+
+        // 获取匹配评分用于排序
+        function getMatchScore(university, searchTerm) {
+            if (!searchTerm) return 0;
+            
+            const searchLower = searchTerm.toLowerCase();
+            const searchData = university._searchData;
+            let score = 0;
+            
+            // 名称完全匹配最高分
+            if (searchData.nameLower === searchLower) score += 100;
+            else if (searchData.nameLower.startsWith(searchLower)) score += 80;
+            else if (searchData.nameLower.includes(searchLower)) score += 50;
+            
+            // 拼音匹配
+            if (searchData.namePinyin === searchLower) score += 60;
+            else if (searchData.namePinyin.includes(searchLower)) score += 30;
+            
+            // 首字母匹配
+            if (searchData.nameInitials === searchLower) score += 40;
+            else if (searchData.nameInitials.includes(searchLower)) score += 20;
+            
+            // 其他字段匹配
+            if (searchData.cityLower.includes(searchLower)) score += 25;
+            if (searchData.descriptionLower.includes(searchLower)) score += 20;
+            if (searchData.rankingLower.includes(searchLower)) score += 15;
+            
+            return score;
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            precomputeSearchData(); // 预计算搜索数据
+            updateStats();
+            renderUniversities();
+            setupSearch();
+            setupQuickSearch();
+        });
+    </script>
+</body>
+</html>

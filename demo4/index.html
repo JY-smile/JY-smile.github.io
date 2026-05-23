@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>五一去哪玩 · 旅行老虎机</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 首页 -->
+    <section id="home-page" class="page active">
+        <div class="home-container">
+            <div class="logo-animation">
+                <i class="fas fa-plane-departure"></i>
+            </div>
+            <h1 class="main-title">
+                <span class="gradient-text">五一去哪玩？</span>
+            </h1>
+            <p class="subtitle">让旅行灵感随机降临</p>
+            <button class="btn-primary pulse-animation" onclick="app.goToSurvey()">
+                <span>开始匹配</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="floating-icons">
+                <i class="fas fa-suitcase"></i>
+                <i class="fas fa-camera"></i>
+                <i class="fas fa-map-marker-alt"></i>
+                <i class="fas fa-sun"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- 问卷页 -->
+    <section id="survey-page" class="page">
+        <div class="survey-container">
+            <div class="survey-header">
+                <button class="btn-back" onclick="app.goBack()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <h2>定制你的旅程</h2>
+            </div>
+
+            <!-- 问题1：出发地 -->
+            <div class="question-card">
+                <div class="question-number">1</div>
+                <h3><i class="fas fa-map-pin"></i> 出发地</h3>
+                <div class="select-group">
+                    <select id="province-select" class="form-select">
+                        <option value="">选择省份</option>
+                    </select>
+                    <select id="city-select" class="form-select">
+                        <option value="">选择城市</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 问题2：预算 -->
+            <div class="question-card">
+                <div class="question-number">2</div>
+                <h3><i class="fas fa-wallet"></i> 预算范围</h3>
+                <div class="budget-display">
+                    <span class="budget-label">¥<span id="budget-value">100</span></span>
+                    <span class="budget-max" id="budget-max-label"></span>
+                </div>
+                <input type="range" id="budget-slider" class="budget-slider" min="0" max="100" value="0">
+                <div class="budget-range-labels">
+                    <span>¥0-500</span>
+                    <span>无上限🔥</span>
+                </div>
+                <div class="quick-tags">
+                    <button class="tag-btn" data-value="5">500</button>
+                    <button class="tag-btn" data-value="15">1k</button>
+                    <button class="tag-btn" data-value="25">2k</button>
+                    <button class="tag-btn" data-value="35">3k</button>
+                    <button class="tag-btn" data-value="45">5k</button>
+                    <button class="tag-btn" data-value="95">无上限</button>
+                </div>
+            </div>
+
+            <!-- 问题3：天数 -->
+            <div class="question-card">
+                <div class="question-number">3</div>
+                <h3><i class="fas fa-calendar-alt"></i> 游玩天数</h3>
+                <div class="days-stepper">
+                    <button class="stepper-btn" onclick="app.adjustDays(-1)">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="days-value" id="days-value">3</span>
+                    <button class="stepper-btn" onclick="app.adjustDays(1)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <p class="days-hint">建议 3-5 天深度游</p>
+            </div>
+
+            <button class="btn-generate" onclick="app.generateDestinations()">
+                <i class="fas fa-dice"></i>
+                <span>生成灵感</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- 加载页 -->
+    <section id="loading-page" class="page">
+        <div class="loading-container">
+            <div class="loading-animation">
+                <div class="travel-globe">
+                    <i class="fas fa-globe-asia"></i>
+                    <div class="orbit">
+                        <i class="fas fa-plane plane-1"></i>
+                        <i class="fas fa-plane plane-2"></i>
+                    </div>
+                </div>
+                <div class="loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+            <p class="loading-status">正在规划你的五一之旅...</p>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="loading-tips">
+                <i class="fas fa-lightbulb"></i>
+                <span id="loading-tip">正在搜索热门目的地...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 结果页 -->
+    <section id="result-page" class="page">
+        <div class="result-header">
+            <button class="btn-back" onclick="app.goBack()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h2>精选目的地</h2>
+        </div>
+
+        <div class="slot-machine-container">
+            <!-- 4x5 方块网格 -->
+            <div class="destinations-grid" id="destinations-grid">
+                <!-- 动态生成20个方块 -->
+            </div>
+            
+            <!-- 中央选择按钮 -->
+            <button id="spin-btn" class="grid-center-btn" onclick="app.startSpin()">
+                <i class="fas fa-play"></i>
+                <span>开始</span>
+            </button>
+        </div>
+
+        <div class="slot-controls">
+            <p class="result-hint">点击按钮，让命运决定你的下一站</p>
+        </div>
+    </section>
+
+    <!-- 详情卡片弹窗 -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-overlay" onclick="app.closeModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="app.closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-image">
+                <img id="modal-img" src="" alt="">
+                <div class="modal-image-overlay"></div>
+            </div>
+            <div class="modal-body">
+                <h3 id="modal-title"></h3>
+                <p id="modal-city" class="modal-city"></p>
+                <p id="modal-desc" class="modal-desc"></p>
+                
+                <div class="modal-tags" id="modal-tags"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/slot.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
